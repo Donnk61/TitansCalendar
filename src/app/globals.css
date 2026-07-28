@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+:root {
+  --background: #151211;
+  --foreground: #f5f1ef;
+  --surface: #1d1817;
+  --surface-elevated: #2a1b18;
+  --surface-muted: #201c1a;
+  --border: #3a302d;
+  --border-strong: #58423b;
+  --text-primary: #f5f1ef;
+  --text-secondary: #b9b0ad;
+  --text-muted: #8f8581;
+  --brand-red: #f0442e;
+  --brand-orange: #ff8a2a;
+  --brand-amber: #ffb03a;
+  --focus: #ff8a2a;
+  --success: #61d394;
+  --warning: #ffb03a;
+  --danger: #ff5a45;
+  --info: #9cc7ff;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow-soft: 0 16px 48px rgb(0 0 0 / 0.24);
+  --space-shell-x: clamp(1rem, 4vw, 2rem);
+  --duration-fast: 140ms;
+  --duration-normal: 180ms;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-brand-red: var(--brand-red);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-amber: var(--brand-amber);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-montserrat);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  color-scheme: dark;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand-orange) 34%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+.titans-calendar {
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: var(--surface);
+  --fc-neutral-bg-color: var(--surface-muted);
+  --fc-list-event-hover-bg-color: var(--surface-elevated);
+  --fc-today-bg-color: color-mix(in srgb, var(--brand-orange) 12%, transparent);
+  --fc-now-indicator-color: var(--brand-orange);
+  --fc-small-font-size: 0.78rem;
+}
+
+.titans-calendar .fc {
+  color: var(--text-primary);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+.titans-calendar .fc-view-harness {
+  background: var(--surface);
+}
+
+.titans-calendar .fc-scrollgrid {
+  border: 0;
+}
+
+.titans-calendar .fc-col-header-cell,
+.titans-calendar .fc-daygrid-day,
+.titans-calendar .fc-timegrid-slot,
+.titans-calendar .fc-timegrid-axis {
+  border-color: var(--border);
+}
+
+.titans-calendar .fc-col-header-cell-cushion,
+.titans-calendar .fc-daygrid-day-number {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.titans-calendar .fc-daygrid-day-number {
+  padding: 0.45rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.titans-calendar .fc-day-today .fc-daygrid-day-number {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.titans-calendar .fc-event {
+  border: 1px solid var(--border-strong);
+  background: color-mix(in srgb, var(--surface-elevated) 86%, transparent);
+  color: var(--text-primary);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.titans-calendar .fc-event:hover {
+  border-color: var(--brand-orange);
+}
+
+.titans-calendar .fc-event:focus,
+.titans-calendar .fc-event:focus-visible,
+.titans-calendar a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.titans-calendar .event-status-cancelled {
+  border-style: dotted;
+  opacity: 0.78;
+  text-decoration: line-through;
+}
+
+.titans-calendar .event-status-completed {
+  opacity: 0.72;
+}
+
+.titans-calendar .event-status-pending {
+  border-style: dashed;
+}
+
+.titans-calendar .event-status-changed {
+  box-shadow: inset 0 -2px 0 var(--info);
+}
+
+.titans-calendar .event-important {
+  border-color: color-mix(in srgb, var(--brand-orange) 62%, var(--border));
+}
+
+.titans-calendar .fc-daygrid-more-link,
+.titans-calendar .titans-more-link {
+  color: var(--brand-amber);
+  font-weight: 700;
+}
+
+.titans-calendar .fc-popover {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft);
+}
+
+.titans-calendar .fc-popover-header {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .titans-calendar {
+    min-height: 0;
+  }
+
+  .titans-calendar .fc-event {
+    min-height: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
