@@ -47,3 +47,4 @@ next-env.d.ts
 
 # local scratch/output
 /titans-cronograma
+/supabase/.temp

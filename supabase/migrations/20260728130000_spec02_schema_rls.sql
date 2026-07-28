@@ -22,38 +22,6 @@ as $$
   select lower(coalesce(auth.jwt() ->> 'email', ''));
 $$;
 
-create function public.is_editor()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public, pg_temp
-as $$
-  select exists (
-    select 1
-    from public.editor_access
-    where email = public.current_user_email()::extensions.citext
-      and is_active = true
-      and role in ('admin', 'editor')
-  );
-$$;
-
-create function public.is_admin()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public, pg_temp
-as $$
-  select exists (
-    select 1
-    from public.editor_access
-    where email = public.current_user_email()::extensions.citext
-      and is_active = true
-      and role = 'admin'
-  );
-$$;
-
 create table public.semesters (
   id uuid primary key default extensions.gen_random_uuid(),
   name text not null check (char_length(trim(name)) between 1 and 80),
@@ -136,6 +104,38 @@ create table public.editor_access (
 );
 
 create index editor_access_email_active_idx on public.editor_access (lower(email::text), is_active);
+
+create function public.is_editor()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select exists (
+    select 1
+    from public.editor_access
+    where email = public.current_user_email()::extensions.citext
+      and is_active = true
+      and role in ('admin', 'editor')
+  );
+$$;
+
+create function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select exists (
+    select 1
+    from public.editor_access
+    where email = public.current_user_email()::extensions.citext
+      and is_active = true
+      and role = 'admin'
+  );
+$$;
 
 create function public.validate_last_active_admin()
 returns trigger

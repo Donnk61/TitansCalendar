@@ -15,7 +15,7 @@
     "supabase:start": "supabase start",
     "supabase:reset": "supabase db reset",
     "supabase:test:rls": "supabase test db supabase/tests",
-    "supabase:types": "supabase gen types typescript --local > src/types/generated/database.types.ts"
+    "supabase:types": "supabase gen types typescript --linked > src/types/generated/database.types.ts"
   },
   "dependencies": {
     "@fullcalendar/core": "6.1.21",
