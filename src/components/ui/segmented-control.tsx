@@ -21,7 +21,7 @@ export function SegmentedControl({
   return (
     <div
       aria-label={ariaLabel}
-      className="inline-flex rounded-sm border border-border bg-surface p-1"
+      className="inline-flex border-y border-border bg-transparent py-1"
       role="tablist"
     >
       {items.map((item) => {
@@ -34,9 +34,9 @@ export function SegmentedControl({
           <button
             aria-selected={selected}
             className={cn(
-              "inline-flex min-h-9 items-center gap-2 rounded-xs px-3 text-sm font-semibold transition duration-normal",
+              "inline-flex min-h-9 items-center gap-2 px-3 text-sm font-semibold transition duration-normal",
               selected
-                ? "bg-surface-elevated text-text-primary shadow-[inset_0_-2px_0_var(--brand-orange)]"
+                ? "rounded-xs bg-brand-orange text-background"
                 : "text-text-secondary hover:text-text-primary",
             )}
             key={item.value}

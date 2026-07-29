@@ -237,7 +237,7 @@ li {
 }
 
 .titans-calendar .event-status-pending {
-  border-color: var(--warning);
+  border-color: transparent;
 }
 
 .titans-calendar .event-status-changed {

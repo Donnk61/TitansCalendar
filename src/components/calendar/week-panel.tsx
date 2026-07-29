@@ -35,7 +35,7 @@ export function WeekPanel({
         : { start: now, end: now };
   return (
     <aside
-      className="grid max-h-[calc(100svh-6rem)] grid-rows-[auto_minmax(0,1fr)] gap-3"
+      className="grid h-[calc(100svh-6rem)] max-h-[calc(100svh-6rem)] grid-rows-[auto_minmax(0,1fr)] gap-3"
       aria-labelledby="week-panel-title"
     >
       <div className="sticky top-0 z-10 flex items-start justify-between gap-3 bg-background pb-1">
@@ -69,7 +69,7 @@ export function WeekPanel({
           title="Nenhum evento nesta semana"
         />
       ) : (
-        <div className="grid min-h-0 content-start gap-3">
+        <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-3">
           <section className="grid gap-2">
             <h3 className="text-sm font-bold text-text-secondary">
               Proximo evento
@@ -78,9 +78,9 @@ export function WeekPanel({
           </section>
 
           {laterEvents.length > 0 ? (
-            <section className="grid min-h-0 gap-2">
+            <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-2">
               <h3 className="text-sm font-bold text-text-secondary">Depois</h3>
-              <div className="titans-thin-scrollbar grid max-h-[52svh] overflow-y-auto border-y border-border">
+              <div className="titans-thin-scrollbar grid min-h-0 overflow-y-auto border-y border-border">
                 {laterEvents.map((event) => (
                   <WeekEventRow
                     event={event}
@@ -148,6 +148,7 @@ function WeekEventRow({
   onEventSelect?: (eventId: string, trigger: HTMLElement) => void;
 }) {
   const projectSummary = getProjectSummary(event);
+  const showStatus = event.status !== "confirmed";
 
   return (
     <button
@@ -166,11 +167,15 @@ function WeekEventRow({
       </span>
       <span className="flex min-w-0 items-center gap-2 text-xs text-text-secondary">
         <span className="truncate">{projectSummary ?? "Geral"}</span>
-        <span
-          aria-hidden="true"
-          className="size-1 rounded-full bg-brand-orange"
-        />
-        <span className="truncate">{formatStatus(event.status)}</span>
+        {showStatus ? (
+          <>
+            <span
+              aria-hidden="true"
+              className="size-1 rounded-full bg-brand-orange"
+            />
+            <span className="truncate">{formatStatus(event.status)}</span>
+          </>
+        ) : null}
       </span>
     </button>
   );

@@ -18,7 +18,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { StatusBadge } from "@/features/events/event-status";
@@ -265,15 +265,19 @@ function CompactStatusIcon({
   status: EventStatus;
 }) {
   if (status === "confirmed" || status === "completed") {
+    return null;
+  }
+
+  if (status === "pending") {
     return (
-      <Check
+      <Clock3
         aria-label={label}
-        className="ml-auto size-3.5 shrink-0 text-success"
+        className="ml-auto size-3.5 shrink-0 text-warning"
       />
     );
   }
 
-  if (status === "pending" || status === "cancelled" || status === "changed") {
+  if (status === "cancelled" || status === "changed") {
     return (
       <span className="ml-auto shrink-0 rounded-xs border border-current px-1 py-0.5 text-[0.65rem] font-bold">
         {label}
