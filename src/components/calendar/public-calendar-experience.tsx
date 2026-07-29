@@ -190,8 +190,8 @@ export function PublicCalendarExperience({
       <div
         className={
           weekPanelOpen
-            ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"
-            : "grid gap-5 xl:grid-cols-[minmax(0,1fr)_3rem]"
+            ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_330px]"
+            : "grid gap-5 xl:grid-cols-[minmax(0,1fr)_2.25rem]"
         }
       >
         <div className="grid min-w-0 content-start gap-3">
@@ -224,26 +224,18 @@ export function PublicCalendarExperience({
             aria-label="Resumo da semana"
           >
             {weekPanelOpen ? (
-              <div className="grid gap-3">
-                <button
-                  className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
-                  onClick={() => setWeekPanelOpen(false)}
-                  type="button"
-                >
-                  Recolher
-                  <ChevronRight aria-hidden="true" className="size-4" />
-                </button>
-                <PublicWeekPanelExperience />
-              </div>
+              <PublicWeekPanelExperience
+                onCollapse={() => setWeekPanelOpen(false)}
+              />
             ) : (
               <button
                 aria-label="Abrir resumo da semana"
-                className="flex min-h-[18rem] w-12 flex-col items-center justify-start gap-3 rounded-md border border-border bg-surface px-2 py-3 text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+                className="flex min-h-[16rem] w-8 flex-col items-center justify-start gap-2 border-l border-border bg-transparent px-1 py-3 text-text-muted transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
                 onClick={() => setWeekPanelOpen(true)}
                 type="button"
               >
-                <ChevronLeft aria-hidden="true" className="size-4" />
-                <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.16em] [writing-mode:vertical-rl]">
+                <ChevronLeft aria-hidden="true" className="size-3.5" />
+                <span className="font-mono text-[0.62rem] font-bold uppercase tracking-[0.14em] [writing-mode:vertical-rl]">
                   Esta semana
                 </span>
               </button>
@@ -255,14 +247,22 @@ export function PublicCalendarExperience({
   );
 }
 
-export function PublicWeekPanelExperience() {
+export function PublicWeekPanelExperience({
+  onCollapse,
+}: {
+  onCollapse?: () => void;
+}) {
   const {
     actions,
     meta: { filteredEvents },
   } = useExperience();
 
   return (
-    <WeekPanel events={filteredEvents} onEventSelect={actions.selectEvent} />
+    <WeekPanel
+      events={filteredEvents}
+      onCollapse={onCollapse}
+      onEventSelect={actions.selectEvent}
+    />
   );
 }
 

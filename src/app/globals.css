@@ -99,6 +99,25 @@ li {
   -webkit-line-clamp: 2;
 }
 
+.titans-thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--text-muted) 38%, transparent)
+    transparent;
+}
+
+.titans-thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.titans-thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.titans-thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 36%, transparent);
+}
+
 .titans-calendar {
   --fc-border-color: var(--border);
   --fc-page-bg-color: var(--surface);

@@ -1,4 +1,4 @@
-import { AlertCircle, CalendarClock } from "lucide-react";
+import { AlertCircle, CalendarClock, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EventTypeIndicator } from "@/components/events/event-type-indicator";
@@ -14,10 +14,12 @@ import { APP_TIME_ZONE, getWeekRange } from "@/lib/dates";
 export function WeekPanel({
   events,
   now = new Date(),
+  onCollapse,
   onEventSelect,
 }: {
   events: PublicCalendarEvent[];
   now?: Date;
+  onCollapse?: () => void;
   onEventSelect?: (eventId: string, trigger: HTMLElement) => void;
 }) {
   const groups = groupEventsByCurrentWeek(events, now);
@@ -33,19 +35,31 @@ export function WeekPanel({
         : { start: now, end: now };
   return (
     <aside
-      className="grid max-h-[calc(100svh-7rem)] grid-rows-[auto_minmax(0,1fr)] gap-4"
+      className="grid max-h-[calc(100svh-6rem)] grid-rows-[auto_minmax(0,1fr)] gap-3"
       aria-labelledby="week-panel-title"
     >
-      <div className="sticky top-0 z-10 bg-background pb-1">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-orange">
-          ESTA SEMANA
-        </p>
-        <h2
-          className="mt-1 font-display text-2xl font-black"
-          id="week-panel-title"
-        >
-          {formatWeekRange(displayWeek.start, displayWeek.end)}
-        </h2>
+      <div className="sticky top-0 z-10 flex items-start justify-between gap-3 bg-background pb-1">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">
+            ESTA SEMANA
+          </p>
+          <h2
+            className="mt-1 font-display text-2xl font-black leading-none"
+            id="week-panel-title"
+          >
+            {formatWeekRange(displayWeek.start, displayWeek.end)}
+          </h2>
+        </div>
+        {onCollapse ? (
+          <button
+            className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-xs border border-border bg-transparent px-2 text-xs font-semibold text-text-muted transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+            onClick={onCollapse}
+            type="button"
+          >
+            Recolher
+            <ChevronRight aria-hidden="true" className="size-3.5" />
+          </button>
+        ) : null}
       </div>
 
       {visibleEvents.length === 0 ? (
@@ -55,7 +69,7 @@ export function WeekPanel({
           title="Nenhum evento nesta semana"
         />
       ) : (
-        <div className="grid min-h-0 content-start gap-4">
+        <div className="grid min-h-0 content-start gap-3">
           <section className="grid gap-2">
             <h3 className="text-sm font-bold text-text-secondary">
               Proximo evento
@@ -66,7 +80,7 @@ export function WeekPanel({
           {laterEvents.length > 0 ? (
             <section className="grid min-h-0 gap-2">
               <h3 className="text-sm font-bold text-text-secondary">Depois</h3>
-              <div className="grid max-h-[52svh] overflow-y-auto rounded-md border border-border bg-surface">
+              <div className="titans-thin-scrollbar grid max-h-[52svh] overflow-y-auto border-y border-border">
                 {laterEvents.map((event) => (
                   <WeekEventRow
                     event={event}
