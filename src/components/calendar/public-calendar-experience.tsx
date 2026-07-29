@@ -13,6 +13,7 @@ import {
 import dynamic from "next/dynamic";
 import {
   CalendarDays,
+  CalendarPlus,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -185,17 +186,19 @@ export function PublicCalendarExperience({
         },
       }}
     >
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid min-w-0 content-start gap-3">
           <ImportantAnnouncements />
-          <EventFilters />
+          {!isDesktop ? <EventFilters /> : null}
           <AppliedFilterChips />
           {filteredEvents.length > 0 && !isDesktop ? (
             <MobileCalendarAgenda />
           ) : null}
           {isDesktop ? (
             <DesktopPublicCalendar
+              eventCount={filteredEvents.length}
               events={filteredEvents.map(toFullCalendarEvent)}
+              filtersSlot={<EventFilters />}
               onEventSelect={actions.selectEvent}
               semester={semester}
             />
@@ -209,7 +212,11 @@ export function PublicCalendarExperience({
           ) : null}
           <EventDetailsOverlay />
         </div>
-        {isDesktop ? <PublicWeekPanelExperience /> : null}
+        {isDesktop ? (
+          <div className="xl:sticky xl:top-24 xl:self-start">
+            <PublicWeekPanelExperience />
+          </div>
+        ) : null}
       </div>
     </ExperienceContext>
   );
@@ -755,7 +762,7 @@ function EventDetailsOverlay() {
     <div
       aria-labelledby="event-detail-title"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-end bg-background/80 px-3 py-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-end justify-end bg-background/70 px-3 py-3 backdrop-blur-sm sm:p-4"
       role="dialog"
     >
       <button
@@ -764,9 +771,9 @@ function EventDetailsOverlay() {
         onClick={actions.closeDetails}
         type="button"
       />
-      <article className="relative max-h-[88svh] w-full overflow-y-auto overscroll-contain rounded-t-md border border-border bg-surface p-5 shadow-soft sm:max-w-2xl sm:rounded-md">
+      <article className="relative flex max-h-[92svh] w-full flex-col overflow-hidden rounded-t-md border border-border bg-surface shadow-soft sm:max-w-md sm:rounded-md">
         <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
-          <div className="min-w-0">
+          <div className="min-w-0 p-5 pb-0">
             <div className="flex flex-wrap gap-2">
               <EventTypeIndicator type={event.type} />
               <StatusBadge status={event.status} />
@@ -779,12 +786,13 @@ function EventDetailsOverlay() {
             </h2>
           </div>
           <IconButton
+            className="m-4"
             icon={<X aria-hidden="true" className="size-4" />}
             label="Fechar detalhes"
             onClick={actions.closeDetails}
           />
         </div>
-        <div className="grid gap-5 py-5">
+        <div className="grid gap-5 overflow-y-auto px-5 py-5">
           <DetailRow
             icon={<CalendarDays aria-hidden="true" className="size-4" />}
             label="Data e horário"
@@ -848,6 +856,21 @@ function EventDetailsOverlay() {
               </div>
             </div>
           ) : null}
+        </div>
+        <div className="flex flex-wrap gap-2 border-t border-border p-5">
+          {safeMeetingUrl ? (
+            <ExternalAnchor href={safeMeetingUrl}>
+              Entrar no Meet
+            </ExternalAnchor>
+          ) : null}
+          <a
+            className="inline-flex min-h-9 items-center gap-2 rounded-sm border border-brand-orange bg-brand-orange px-3 text-sm font-semibold text-background transition duration-normal hover:bg-brand-amber focus-visible:outline-focus"
+            download={`${slugify(event.title)}.ics`}
+            href={createCalendarDataUri(event)}
+          >
+            <CalendarPlus aria-hidden="true" className="size-3.5" />
+            Adicionar ao calendario
+          </a>
         </div>
       </article>
     </div>
@@ -1011,6 +1034,71 @@ function formatEventDateTime(event: PublicCalendarEvent): string {
   return end
     ? `${dateFormatter.format(start)}, ${timeFormatter.format(start)} a ${timeFormatter.format(end)}`
     : `${dateFormatter.format(start)}, ${timeFormatter.format(start)}`;
+}
+
+function createCalendarDataUri(event: PublicCalendarEvent) {
+  const start = new Date(event.start);
+  const end = event.end
+    ? new Date(event.end)
+    : new Date(start.getTime() + 60 * 60 * 1000);
+  const location = event.location ?? event.meetingUrl ?? "";
+  const description = [
+    event.description,
+    event.meetingUrl ? `Meet: ${event.meetingUrl}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//TITANS//Cronograma//PT-BR",
+    "BEGIN:VEVENT",
+    `UID:${event.id}@titans-cronograma`,
+    `DTSTAMP:${formatIcsDate(new Date())}`,
+    event.allDay
+      ? `DTSTART;VALUE=DATE:${formatIcsDateOnly(start)}`
+      : `DTSTART:${formatIcsDate(start)}`,
+    event.allDay
+      ? `DTEND;VALUE=DATE:${formatIcsDateOnly(end)}`
+      : `DTEND:${formatIcsDate(end)}`,
+    `SUMMARY:${escapeIcsText(event.title)}`,
+    location ? `LOCATION:${escapeIcsText(location)}` : null,
+    description ? `DESCRIPTION:${escapeIcsText(description)}` : null,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ]
+    .filter(Boolean)
+    .join("\r\n");
+
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+}
+
+function formatIcsDate(date: Date) {
+  return date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
+}
+
+function formatIcsDateOnly(date: Date) {
+  return date.toISOString().slice(0, 10).replace(/-/g, "");
+}
+
+function escapeIcsText(value: string) {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function slugify(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 function getInitialMobileMonth(semester: PublicSemester): Date {
