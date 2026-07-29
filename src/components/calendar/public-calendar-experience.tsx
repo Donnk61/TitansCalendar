@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type CSSProperties,
   createContext,
   type ReactNode,
   use,
@@ -127,9 +128,14 @@ export function PublicCalendarExperience({
   const [filters, setFilters] = useState(emptyPublicEventFilters);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [weekPanelOpen, setWeekPanelOpen] = useState(true);
+  const [weekPanelFrameHeight, setWeekPanelFrameHeight] = useState<
+    number | null
+  >(null);
   const [dismissedAnnouncementIds, setDismissedAnnouncementIds] = useState<
     Set<string>
   >(() => readDismissedAnnouncements());
+  const calendarColumnRef = useRef<HTMLDivElement | null>(null);
+  const weekRailRef = useRef<HTMLElement | null>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
   const isDesktop = useIsDesktop();
   const filteredEvents = useMemo(
@@ -159,6 +165,50 @@ export function PublicCalendarExperience({
     setSelectedEventId(null);
     requestAnimationFrame(() => triggerRef.current?.focus());
   }, []);
+
+  useEffect(() => {
+    if (!isDesktop || !weekPanelOpen) {
+      return;
+    }
+
+    const calendarElement =
+      calendarColumnRef.current?.querySelector<HTMLElement>(".titans-calendar");
+    const railElement = weekRailRef.current;
+
+    if (!calendarElement || !railElement) {
+      return;
+    }
+
+    const calendarTarget = calendarElement;
+    const railTarget = railElement;
+    let frameRequest = 0;
+
+    function updateFrameHeight() {
+      const calendarRect = calendarTarget.getBoundingClientRect();
+      const railRect = railTarget.getBoundingClientRect();
+      const nextHeight = Math.max(320, calendarRect.bottom - railRect.top);
+
+      setWeekPanelFrameHeight((current) =>
+        Math.abs((current ?? 0) - nextHeight) > 1
+          ? Math.round(nextHeight)
+          : current,
+      );
+    }
+
+    frameRequest = requestAnimationFrame(updateFrameHeight);
+
+    const observer = new ResizeObserver(updateFrameHeight);
+    observer.observe(calendarTarget);
+    observer.observe(railTarget);
+    window.addEventListener("resize", updateFrameHeight);
+
+    return () => {
+      cancelAnimationFrame(frameRequest);
+      observer.disconnect();
+      window.removeEventListener("resize", updateFrameHeight);
+    };
+  }, [filteredEvents.length, isDesktop, weekPanelOpen]);
+
   const actions = useMemo<ExperienceActions>(
     () => ({
       clearFilters,
@@ -202,12 +252,14 @@ export function PublicCalendarExperience({
             <MobileCalendarAgenda />
           ) : null}
           {isDesktop ? (
-            <DesktopPublicCalendar
-              events={filteredEvents.map(toFullCalendarEvent)}
-              filtersSlot={<EventFilters />}
-              onEventSelect={actions.selectEvent}
-              semester={semester}
-            />
+            <div className="min-w-0" ref={calendarColumnRef}>
+              <DesktopPublicCalendar
+                events={filteredEvents.map(toFullCalendarEvent)}
+                filtersSlot={<EventFilters />}
+                onEventSelect={actions.selectEvent}
+                semester={semester}
+              />
+            </div>
           ) : null}
           {filteredEvents.length === 0 ? (
             <EmptyState
@@ -222,6 +274,14 @@ export function PublicCalendarExperience({
           <aside
             className="h-full xl:sticky xl:top-24 xl:self-stretch"
             aria-label="Resumo da semana"
+            ref={weekRailRef}
+            style={
+              weekPanelFrameHeight
+                ? ({
+                    "--week-panel-frame-height": `${weekPanelFrameHeight}px`,
+                  } as CSSProperties)
+                : undefined
+            }
           >
             {weekPanelOpen ? (
               <PublicWeekPanelExperience
