@@ -121,7 +121,10 @@ export function EventForm({
   ]);
 
   return (
-    <form action={formAction} className="grid gap-6">
+    <form
+      action={formAction}
+      className="grid w-full min-w-0 max-w-full gap-4 sm:gap-6"
+    >
       {initialValues?.originalUpdatedAt ? (
         <input
           name="originalUpdatedAt"
@@ -130,8 +133,8 @@ export function EventForm({
         />
       ) : null}
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-        <div className="grid gap-4 md:grid-cols-[2fr_1fr_1fr]">
+      <section className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5">
+        <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[2fr_1fr_1fr]">
           <Field>
             <Label htmlFor="title">Título</Label>
             <Input
@@ -181,7 +184,7 @@ export function EventForm({
           onChange={(event) => setAllDay(event.currentTarget.checked)}
         />
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
           <Field>
             <Label htmlFor="startsOn">Data Inicial</Label>
             <Input
@@ -231,8 +234,8 @@ export function EventForm({
         </div>
 
         {mode === "create" ? (
-          <div className="grid gap-4 rounded-sm border border-border bg-surface-muted p-4">
-            <div className="grid gap-4 md:grid-cols-[1fr_220px]">
+          <div className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface-muted p-3 sm:p-4">
+            <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[1fr_220px]">
               <Field>
                 <Label htmlFor="recurrence">Repetir</Label>
                 <Select
@@ -287,14 +290,14 @@ export function EventForm({
         )}
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
+      <section className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5">
         <MultiSelect
           legend="Projetos"
           name="projectIds"
           options={projects}
           selectedValues={initialValues?.projectIds}
         />
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-3">
           <Field>
             <Label htmlFor="locationName">Local</Label>
             <Input
@@ -333,6 +336,7 @@ export function EventForm({
         <Field>
           <Label htmlFor="description">Descrição Curta</Label>
           <Textarea
+            className="min-h-36"
             defaultValue={initialValues?.description}
             id="description"
             maxLength={1000}
@@ -347,7 +351,7 @@ export function EventForm({
         />
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
+      <section className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5">
         <div>
           <h2 className="font-display text-lg font-semibold text-text-primary">
             Links Externos
@@ -357,7 +361,10 @@ export function EventForm({
           </p>
         </div>
         {[0, 1, 2].map((index) => (
-          <div className="grid gap-4 md:grid-cols-[1fr_2fr]" key={index}>
+          <div
+            className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[1fr_2fr]"
+            key={index}
+          >
             <Field>
               <Label htmlFor={`linkLabel-${index}`}>Rótulo</Label>
               <Input
@@ -385,7 +392,7 @@ export function EventForm({
         ))}
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
+      <section className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5">
         <div>
           <h2 className="font-display text-lg font-semibold text-text-primary">
             Mudança Recente
@@ -394,7 +401,7 @@ export function EventForm({
             Use quando data, horário, local ou status relevante mudar.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
+        <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
           <Field>
             <Label htmlFor="changeNote">Nota Curta</Label>
             <Input

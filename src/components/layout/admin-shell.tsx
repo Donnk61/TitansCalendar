@@ -36,7 +36,7 @@ export function AdminShell({
       : adminNavigation;
 
   return (
-    <div className="min-h-svh bg-background text-text-primary">
+    <div className="min-h-svh overflow-x-hidden bg-background text-text-primary">
       <a
         className="sr-only z-50 rounded-sm bg-brand-orange px-3 py-2 font-semibold text-background focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
         href="#conteudo-admin"
@@ -80,7 +80,7 @@ export function AdminShell({
           </div>
         </div>
       </header>
-      <div className="mx-auto grid max-w-7xl gap-6 px-[var(--space-shell-x)] py-6 lg:grid-cols-[220px_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-4 px-[var(--space-shell-x)] py-4 sm:gap-6 sm:py-6 lg:grid-cols-[220px_1fr]">
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <nav
             aria-label="Navegação administrativa"
@@ -102,7 +102,7 @@ export function AdminShell({
             })}
           </nav>
         </aside>
-        <main className="min-w-0" id="conteudo-admin">
+        <main className="min-w-0 overflow-x-hidden" id="conteudo-admin">
           {children}
         </main>
       </div>

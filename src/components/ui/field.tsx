@@ -14,7 +14,7 @@ export function Field({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cn("grid gap-2", className)}>{children}</div>;
+  return <div className={cn("grid min-w-0 gap-2", className)}>{children}</div>;
 }
 
 export function Label({
@@ -30,7 +30,7 @@ export function Label({
 }
 
 const inputClassName =
-  "min-h-10 w-full rounded-sm border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition duration-normal hover:border-border-strong disabled:cursor-not-allowed disabled:opacity-55";
+  "min-h-10 w-full min-w-0 max-w-full rounded-sm border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition duration-normal hover:border-border-strong disabled:cursor-not-allowed disabled:opacity-55";
 
 export function Input({
   className,
@@ -48,7 +48,11 @@ export function Textarea({
 }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea
-      className={cn(inputClassName, "min-h-28 resize-y leading-6", className)}
+      className={cn(
+        inputClassName,
+        "min-h-28 resize-y overflow-x-hidden leading-6 break-words [overflow-wrap:anywhere]",
+        className,
+      )}
       {...props}
     />
   );

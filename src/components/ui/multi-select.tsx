@@ -41,18 +41,18 @@ export function MultiSelect({
   }
 
   return (
-    <fieldset className="grid gap-2">
+    <fieldset className="grid min-w-0 gap-2">
       <legend className="text-sm font-semibold text-text-primary">
         {legend}
       </legend>
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-2 sm:grid-cols-2">
         {options.map((option) => {
           const isSelected = selected.has(option.value);
 
           return (
             <label
               className={cn(
-                "flex min-h-12 items-start gap-3 rounded-sm border bg-surface p-3 text-sm transition duration-normal",
+                "flex min-h-12 min-w-0 items-start gap-3 rounded-sm border bg-surface p-3 text-sm transition duration-normal",
                 "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
                 isSelected
                   ? "border-brand-orange"
@@ -81,12 +81,14 @@ export function MultiSelect({
               >
                 {isSelected ? <Check className="size-3" /> : null}
               </span>
-              <span className="grid gap-1">
-                <span className="font-semibold text-text-primary">
+              <span className="grid min-w-0 gap-1">
+                <span className="break-words font-semibold text-text-primary">
                   {option.label}
                 </span>
                 {option.description ? (
-                  <span className="text-text-muted">{option.description}</span>
+                  <span className="break-words text-text-muted">
+                    {option.description}
+                  </span>
                 ) : null}
               </span>
             </label>
