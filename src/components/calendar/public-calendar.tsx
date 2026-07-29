@@ -19,7 +19,6 @@ import multiMonthPlugin from "@fullcalendar/multimonth";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { StatusBadge } from "@/features/events/event-status";
 import { eventStatusConfig } from "@/features/events/event-status";
@@ -114,27 +113,12 @@ export function PublicCalendar({
       </div>
 
       <div className="flex flex-col gap-3 py-1 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-center gap-2">
-          {view !== "agenda" ? (
-            <IconButton
-              className="size-8"
-              icon={<ChevronLeft aria-hidden="true" className="size-4" />}
-              label="Periodo anterior"
-              onClick={() => navigate("previous")}
-            />
-          ) : null}
-          <h2 className="min-w-0 font-display text-lg font-black text-text-primary sm:text-xl">
-            {periodTitle}
-          </h2>
-          {view !== "agenda" ? (
-            <IconButton
-              className="size-8"
-              icon={<ChevronRight aria-hidden="true" className="size-4" />}
-              label="Proximo periodo"
-              onClick={() => navigate("next")}
-            />
-          ) : null}
-        </div>
+        <PeriodNavigator
+          onNext={() => navigate("next")}
+          onPrevious={() => navigate("previous")}
+          title={periodTitle}
+          view={view}
+        />
         {view !== "agenda" ? (
           <button
             className="inline-flex min-h-8 w-fit items-center rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
@@ -212,6 +196,53 @@ export function PublicCalendar({
         </div>
       )}
     </section>
+  );
+}
+
+function PeriodNavigator({
+  onNext,
+  onPrevious,
+  title,
+  view,
+}: {
+  onNext: () => void;
+  onPrevious: () => void;
+  title: string;
+  view: CalendarView;
+}) {
+  if (view === "agenda") {
+    return (
+      <h2 className="min-w-0 font-display text-lg font-black text-text-primary sm:text-xl">
+        {title}
+      </h2>
+    );
+  }
+
+  return (
+    <div className="inline-grid min-h-11 w-full max-w-sm grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center rounded-sm border border-border bg-surface px-1 shadow-[inset_0_-1px_0_color-mix(in_srgb,var(--brand-orange)_28%,transparent)] sm:w-auto sm:min-w-80">
+      <button
+        aria-label="Periodo anterior"
+        className="grid size-9 place-items-center rounded-xs text-text-muted transition duration-normal hover:bg-surface-elevated hover:text-brand-orange focus-visible:outline-focus"
+        onClick={onPrevious}
+        type="button"
+      >
+        <ChevronLeft aria-hidden="true" className="size-4" />
+      </button>
+      <h2
+        className="titans-period-title min-w-0 text-center font-display text-lg font-black text-text-primary sm:text-xl"
+        key={title}
+      >
+        {title}
+      </h2>
+      <button
+        aria-label="Proximo periodo"
+        className="grid size-9 place-items-center rounded-xs text-text-muted transition duration-normal hover:bg-surface-elevated hover:text-brand-orange focus-visible:outline-focus"
+        onClick={onNext}
+        type="button"
+      >
+        <ChevronRight aria-hidden="true" className="size-4" />
+      </button>
+    </div>
   );
 }
 

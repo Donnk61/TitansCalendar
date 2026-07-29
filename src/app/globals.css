@@ -118,6 +118,22 @@ li {
   background: color-mix(in srgb, var(--text-muted) 36%, transparent);
 }
 
+.titans-period-title {
+  animation: titans-period-title-in var(--duration-normal) ease-out;
+}
+
+@keyframes titans-period-title-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .titans-calendar {
   --fc-border-color: var(--border);
   --fc-page-bg-color: var(--surface);
