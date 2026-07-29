@@ -1,5 +1,7 @@
 begin;
 
+select plan(1);
+
 set local role anon;
 
 do $$
@@ -116,7 +118,14 @@ begin
   set role = 'admin'
   where email = 'dev-editor@titans.example';
 
-  raise exception 'editor should not manage allowlist';
+  if exists (
+    select 1
+    from public.editor_access
+    where email = 'dev-editor@titans.example'
+      and role = 'admin'
+  ) then
+    raise exception 'editor should not manage allowlist';
+  end if;
 exception
   when insufficient_privilege then
     null;
@@ -136,5 +145,8 @@ update public.semesters
 set is_active = false,
     archived_at = now()
 where id = '10000000-0000-4000-8000-000000000001';
+
+select pass('spec02 RLS smoke checks completed');
+select * from finish();
 
 rollback;

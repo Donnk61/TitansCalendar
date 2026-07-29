@@ -60,21 +60,38 @@ export async function getPublicCalendarHomeData(
       };
     }
 
-    const [events, week, announcements, projects, eventTypes] =
-      await Promise.all([
-        listPublicEventsByRange({
-          rangeStart: toPostgresTimestamp(
-            startOfSemesterWindow(semester.startsOn),
-          ),
-          rangeEnd: toPostgresTimestamp(
-            addDays(endOfSemesterWindow(semester.endsOn), 1),
-          ),
-        }),
-        listCurrentWeekEvents(now),
-        listCurrentAnnouncements(now),
-        listActiveProjects(),
-        listActiveEventTypes(),
-      ]);
+    const rangeStart = toPostgresTimestamp(
+      startOfSemesterWindow(semester.startsOn),
+    );
+    const rangeEnd = toPostgresTimestamp(
+      addDays(endOfSemesterWindow(semester.endsOn), 1),
+    );
+    const [
+      eventsResult,
+      weekResult,
+      announcementsResult,
+      projectsResult,
+      typesResult,
+    ] = await Promise.allSettled([
+      listPublicEventsByRange({ rangeStart, rangeEnd }),
+      listCurrentWeekEvents(now),
+      listCurrentAnnouncements(now),
+      listActiveProjects(),
+      listActiveEventTypes(),
+    ]);
+
+    const events = valueOrEmpty(eventsResult, "public events");
+    const week = valueOrDefault(
+      weekResult,
+      { events: [], nextFutureEvent: null },
+      "current week events",
+    );
+    const announcements = valueOrEmpty(
+      announcementsResult,
+      "public announcements",
+    );
+    const projects = valueOrEmpty(projectsResult, "public projects");
+    const eventTypes = valueOrEmpty(typesResult, "public event types");
 
     return {
       semester,
@@ -111,6 +128,26 @@ export async function getPublicCalendarHomeData(
       source: "supabase",
     };
   }
+}
+
+function valueOrEmpty<T>(
+  result: PromiseSettledResult<T[]>,
+  label: string,
+): T[] {
+  return valueOrDefault(result, [], label);
+}
+
+function valueOrDefault<T>(
+  result: PromiseSettledResult<T>,
+  fallback: T,
+  label: string,
+): T {
+  if (result.status === "fulfilled") {
+    return result.value;
+  }
+
+  console.error(`Failed to load ${label}`, result.reason);
+  return fallback;
 }
 
 function getDemoHomeData(now: Date): PublicCalendarHomeData {

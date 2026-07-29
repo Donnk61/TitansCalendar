@@ -1,5 +1,7 @@
 begin;
 
+select plan(1);
+
 do $$
 begin
   if not exists (
@@ -61,7 +63,7 @@ $$;
 
 set local request.jwt.claims = '{"email":"dev-admin@titans.example","sub":"00000000-0000-4000-8000-000000000001","role":"authenticated"}';
 
-perform public.archive_active_semester('10000000-0000-4000-8000-000000000001');
+select public.archive_active_semester('10000000-0000-4000-8000-000000000001');
 
 do $$
 begin
@@ -76,5 +78,7 @@ begin
 end;
 $$;
 
-rollback;
+select pass('spec10 semester lifecycle checks completed');
+select * from finish();
 
+rollback;
