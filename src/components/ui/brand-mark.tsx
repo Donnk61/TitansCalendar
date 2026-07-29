@@ -3,19 +3,15 @@ import { cn } from "@/lib/utils/cn";
 
 export function BrandMark({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <span
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <Image
+        alt=""
         aria-hidden="true"
-        className="grid size-9 place-items-center overflow-hidden rounded-sm border border-brand-orange/45 bg-surface-elevated shadow-[inset_0_-2px_0_var(--brand-red)]"
-      >
-        <Image
-          alt=""
-          className="size-8 object-contain"
-          height={32}
-          src="/titans-logo.svg"
-          width={32}
-        />
-      </span>
+        className="size-11 object-contain sm:size-12"
+        height={48}
+        src="/titans-logo.svg"
+        width={48}
+      />
       <span className="grid leading-none">
         <span className="font-display text-sm font-black tracking-[0.18em] text-text-primary">
           TITANS
