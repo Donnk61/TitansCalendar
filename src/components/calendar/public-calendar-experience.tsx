@@ -359,7 +359,7 @@ function EventFilters() {
       <button
         aria-controls="public-calendar-filters"
         aria-expanded={drawerOpen}
-        className="inline-flex min-h-9 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+        className="inline-flex min-h-10 w-full items-center justify-between gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus md:min-h-9 md:w-fit md:justify-start"
         onClick={() => setDrawerOpen((open) => !open)}
         type="button"
       >
@@ -622,6 +622,7 @@ function MobileCalendarAgenda() {
         .sort(([first], [second]) => first.localeCompare(second)),
     [eventsByDay, semester.endsOn, semester.startsOn],
   );
+  const todayKey = toDateKey(new Date());
 
   function moveMonth(direction: -1 | 1) {
     const next = new Date(visibleMonth);
@@ -637,50 +638,39 @@ function MobileCalendarAgenda() {
 
   return (
     <section className="grid gap-4" aria-labelledby="mobile-calendar-title">
-      <div className="flex items-center justify-between gap-3">
-        <h2
-          className="font-display text-xl font-black"
-          id="mobile-calendar-title"
-        >
-          Mês
-        </h2>
-        <div className="flex items-center gap-2">
-          <IconButton
-            icon={<ChevronLeft aria-hidden="true" className="size-4" />}
-            label="Mês anterior"
-            onClick={() => moveMonth(-1)}
-          />
-          <IconButton
-            icon={<ChevronRight aria-hidden="true" className="size-4" />}
-            label="Próximo mês"
-            onClick={() => moveMonth(1)}
-          />
-        </div>
-      </div>
-      <div className="rounded-sm border border-border bg-surface p-3">
-        <p className="mb-3 text-center font-display text-lg font-semibold capitalize text-text-primary">
-          {formatMonthLabel(visibleMonth)}
-        </p>
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-text-muted">
+      <h2 className="sr-only" id="mobile-calendar-title">
+        Mes
+      </h2>
+      <div className="rounded-md border border-border bg-surface p-2.5">
+        <MobileMonthNavigator
+          label={formatMonthLabel(visibleMonth)}
+          onNext={() => moveMonth(1)}
+          onPrevious={() => moveMonth(-1)}
+        />
+        <p className="sr-only">{formatMonthLabel(visibleMonth)}</p>
+        <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[0.68rem] font-semibold uppercase tracking-[0.04em] text-text-muted">
           {["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].map((day) => (
             <span key={day}>{day}</span>
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-7 gap-1">
+        <div className="mt-2 grid grid-cols-7 gap-1.5">
           {monthDays.map((day) => {
             const date = toDateKey(day);
             const dayEvents = eventsByDay.get(date) ?? [];
             const inMonth = day.getMonth() === visibleMonth.getMonth();
             const insideSemester =
               date >= semester.startsOn && date <= semester.endsOn;
+            const isToday = date === todayKey;
 
             return (
               <button
                 aria-label={`${formatDayLabel(day)}${dayEvents.length ? `, ${dayEvents.length} eventos` : ""}`}
                 className={
-                  inMonth && insideSemester
-                    ? "grid min-h-11 place-items-center rounded-sm border border-border bg-background text-sm font-semibold text-text-primary transition duration-normal hover:border-brand-orange focus-visible:outline-focus"
-                    : "grid min-h-11 place-items-center rounded-sm border border-transparent text-sm text-text-muted opacity-45"
+                  inMonth && insideSemester && isToday
+                    ? "grid min-h-12 place-items-center rounded-md border border-brand-orange bg-[color-mix(in_srgb,var(--brand-orange)_9%,var(--surface))] text-sm font-black text-brand-orange transition duration-normal hover:border-brand-orange focus-visible:outline-focus"
+                    : inMonth && insideSemester
+                      ? "grid min-h-12 place-items-center rounded-md border border-border bg-background text-sm font-semibold text-text-primary transition duration-normal hover:border-brand-orange hover:bg-surface-muted focus-visible:outline-focus"
+                      : "grid min-h-12 place-items-center rounded-md border border-transparent text-sm text-text-muted opacity-45"
                 }
                 disabled={!insideSemester || dayEvents.length === 0}
                 key={date}
@@ -701,16 +691,21 @@ function MobileCalendarAgenda() {
         </div>
       </div>
       <section className="grid gap-3" aria-labelledby="mobile-agenda-title">
-        <h2
-          className="font-display text-xl font-black"
-          id="mobile-agenda-title"
-        >
-          Agenda
-        </h2>
+        <div className="flex items-end justify-between gap-3 border-y border-border py-2">
+          <h2
+            className="font-display text-xl font-black"
+            id="mobile-agenda-title"
+          >
+            Agenda
+          </h2>
+          <span className="text-xs font-semibold text-text-muted">
+            {filteredEvents.length} eventos
+          </span>
+        </div>
         {agendaDays.length > 0 ? (
           agendaDays.map(([date, dayEvents]) => (
             <div
-              className="scroll-mt-24 rounded-sm border border-border bg-surface p-3 focus-visible:outline-focus"
+              className="scroll-mt-24 border-b border-border pb-3 focus-visible:outline-focus"
               key={date}
               ref={(node) => {
                 if (node) {
@@ -721,10 +716,10 @@ function MobileCalendarAgenda() {
               }}
               tabIndex={-1}
             >
-              <h3 className="text-sm font-bold capitalize text-text-secondary">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-text-muted">
                 {formatAgendaDate(date)}
               </h3>
-              <div className="mt-3 grid gap-2">
+              <div className="mt-2 grid gap-2">
                 {dayEvents.map((event) => (
                   <MobileAgendaEvent
                     event={event}
@@ -747,6 +742,43 @@ function MobileCalendarAgenda() {
   );
 }
 
+function MobileMonthNavigator({
+  label,
+  onNext,
+  onPrevious,
+}: {
+  label: string;
+  onNext: () => void;
+  onPrevious: () => void;
+}) {
+  return (
+    <div className="grid min-h-11 grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center rounded-sm border border-border bg-background px-1 shadow-[inset_0_-1px_0_color-mix(in_srgb,var(--brand-orange)_28%,transparent)]">
+      <button
+        aria-label="Mes anterior"
+        className="grid size-9 place-items-center rounded-xs text-text-muted transition duration-normal hover:bg-surface-elevated hover:text-brand-orange focus-visible:outline-focus"
+        onClick={onPrevious}
+        type="button"
+      >
+        <ChevronLeft aria-hidden="true" className="size-4" />
+      </button>
+      <p
+        className="titans-period-title min-w-0 text-center font-display text-lg font-black capitalize text-text-primary"
+        key={label}
+      >
+        {label}
+      </p>
+      <button
+        aria-label="Proximo mes"
+        className="grid size-9 place-items-center rounded-xs text-text-muted transition duration-normal hover:bg-surface-elevated hover:text-brand-orange focus-visible:outline-focus"
+        onClick={onNext}
+        type="button"
+      >
+        <ChevronRight aria-hidden="true" className="size-4" />
+      </button>
+    </div>
+  );
+}
+
 function MobileAgendaEvent({
   event,
   onSelect,
@@ -757,14 +789,14 @@ function MobileAgendaEvent({
   const projectSummary = getProjectSummary(event);
 
   return (
-    <article className="grid gap-2 rounded-sm border border-border bg-background p-3">
+    <article className="grid gap-2 rounded-md border border-border bg-background p-3.5">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-xs font-semibold text-text-muted">
             {formatEventTime(event)}
           </p>
           <button
-            className="mt-1 max-w-full text-left font-display text-base font-bold text-text-primary transition duration-normal hover:text-brand-orange focus-visible:outline-focus"
+            className="mt-1 max-w-full text-left font-display text-base font-bold leading-snug text-text-primary transition duration-normal hover:text-brand-orange focus-visible:outline-focus"
             onClick={(clickEvent) =>
               onSelect(event.id, clickEvent.currentTarget)
             }
@@ -773,7 +805,9 @@ function MobileAgendaEvent({
             {event.title}
           </button>
         </div>
-        <StatusBadge status={event.status} />
+        {event.status !== "confirmed" ? (
+          <StatusBadge status={event.status} />
+        ) : null}
       </div>
       <div className="flex flex-wrap gap-2">
         <EventTypeIndicator type={event.type} />
