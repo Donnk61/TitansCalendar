@@ -21,6 +21,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { StatusBadge } from "@/features/events/event-status";
 import { eventStatusConfig } from "@/features/events/event-status";
 import { eventTypeConfig } from "@/features/events/event-type-config";
 import type {
@@ -29,7 +30,8 @@ import type {
 } from "@/features/events/public-types";
 import type { EventStatus } from "@/types/domain";
 
-type CalendarView = "timeGridWeek" | "dayGridMonth" | "multiMonthYear";
+type CalendarView =
+  "timeGridWeek" | "dayGridMonth" | "multiMonthYear" | "agenda";
 
 type PublicCalendarProps = {
   events: FullCalendarPublicEvent[];
@@ -45,6 +47,7 @@ const viewItems = [
   { label: "Semana", value: "timeGridWeek" },
   { label: "Mes", value: "dayGridMonth" },
   { label: "Semestre", value: "multiMonthYear" },
+  { label: "Agenda", value: "agenda" },
 ];
 
 export function PublicCalendar({
@@ -71,6 +74,10 @@ export function PublicCalendar({
   }
 
   function navigate(direction: "previous" | "next") {
+    if (view === "agenda") {
+      return;
+    }
+
     const api = calendarRef.current?.getApi();
 
     if (!api) {
@@ -85,6 +92,10 @@ export function PublicCalendar({
   }
 
   function goToday() {
+    if (view === "agenda") {
+      return;
+    }
+
     calendarRef.current?.getApi().today();
   }
 
@@ -96,7 +107,7 @@ export function PublicCalendar({
     <section className="grid gap-2" aria-label="Calendario publico">
       <div className="flex flex-col gap-3 rounded-md border border-border bg-surface px-3 py-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-xs border border-border bg-background px-2.5 py-1 text-xs font-semibold text-text-secondary">
+          <span className="inline-flex min-h-11 items-center rounded-xs border border-border bg-background px-3 text-xs font-semibold text-text-secondary">
             {eventCount} eventos
           </span>
           {filtersSlot}
@@ -111,92 +122,102 @@ export function PublicCalendar({
 
       <div className="flex flex-col gap-3 py-1 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-2">
-          <IconButton
-            className="size-8"
-            icon={<ChevronLeft aria-hidden="true" className="size-4" />}
-            label="Periodo anterior"
-            onClick={() => navigate("previous")}
-          />
+          {view !== "agenda" ? (
+            <IconButton
+              className="size-8"
+              icon={<ChevronLeft aria-hidden="true" className="size-4" />}
+              label="Periodo anterior"
+              onClick={() => navigate("previous")}
+            />
+          ) : null}
           <h2 className="min-w-0 font-display text-lg font-black text-text-primary sm:text-xl">
             {periodTitle}
           </h2>
-          <IconButton
-            className="size-8"
-            icon={<ChevronRight aria-hidden="true" className="size-4" />}
-            label="Proximo periodo"
-            onClick={() => navigate("next")}
-          />
+          {view !== "agenda" ? (
+            <IconButton
+              className="size-8"
+              icon={<ChevronRight aria-hidden="true" className="size-4" />}
+              label="Proximo periodo"
+              onClick={() => navigate("next")}
+            />
+          ) : null}
         </div>
-        <button
-          className="inline-flex min-h-8 w-fit items-center rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
-          onClick={goToday}
-          type="button"
-        >
-          Hoje
-        </button>
+        {view !== "agenda" ? (
+          <button
+            className="inline-flex min-h-8 w-fit items-center rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+            onClick={goToday}
+            type="button"
+          >
+            Hoje
+          </button>
+        ) : null}
       </div>
 
-      <div className="titans-calendar overflow-hidden rounded-md border border-border bg-surface">
-        <FullCalendar
-          allDayText="Dia inteiro"
-          buttonText={{
-            month: "Mes",
-            week: "Semana",
-            year: "Semestre",
-          }}
-          datesSet={updateVisibleDates}
-          dayMaxEvents={2}
-          displayEventEnd={false}
-          eventClassNames={(arg) => [
-            `event-status-${arg.event.extendedProps.status}`,
-            arg.event.extendedProps.isImportant
-              ? "event-important"
-              : "event-normal",
-          ]}
-          eventClick={(arg) => handleEventClick(arg, onEventSelect)}
-          eventContent={renderEventContent}
-          events={events}
-          firstDay={1}
-          headerToolbar={false}
-          height="auto"
-          initialDate={initialDate}
-          initialView={view}
-          key={view}
-          locale={ptBrLocale}
-          moreLinkClassNames="titans-more-link"
-          moreLinkContent={(arg) => `+${arg.num} eventos`}
-          multiMonthMaxColumns={2}
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            multiMonthPlugin,
-            interactionPlugin,
-          ]}
-          ref={calendarRef}
-          slotLabelFormat={{
-            hour: "2-digit",
-            minute: "2-digit",
-          }}
-          validRange={{
-            start: semester.startsOn,
-            end: addExclusiveSemesterEnd(semester.endsOn),
-          }}
-          views={{
-            multiMonthYear: {
-              duration: { months: getSemesterMonthCount(semester) },
-              multiMonthMinWidth: 280,
-              titleFormat: { month: "long", year: "numeric" },
-            },
-            timeGridWeek: {
-              dayHeaderFormat: {
-                weekday: "short",
-                day: "2-digit",
-                month: "2-digit",
+      {view === "agenda" ? (
+        <SemesterAgenda events={events} onEventSelect={onEventSelect} />
+      ) : (
+        <div className="titans-calendar overflow-hidden rounded-md border border-border bg-surface">
+          <FullCalendar
+            allDayText="Dia inteiro"
+            buttonText={{
+              month: "Mes",
+              week: "Semana",
+              year: "Semestre",
+            }}
+            datesSet={updateVisibleDates}
+            dayMaxEvents={2}
+            displayEventEnd={false}
+            eventClassNames={(arg) => [
+              `event-status-${arg.event.extendedProps.status}`,
+              arg.event.extendedProps.isImportant
+                ? "event-important"
+                : "event-normal",
+            ]}
+            eventClick={(arg) => handleEventClick(arg, onEventSelect)}
+            eventContent={renderEventContent}
+            events={events}
+            firstDay={1}
+            headerToolbar={false}
+            height="auto"
+            initialDate={initialDate}
+            initialView={view}
+            key={view}
+            locale={ptBrLocale}
+            moreLinkClassNames="titans-more-link"
+            moreLinkContent={(arg) => `+${arg.num} eventos`}
+            multiMonthMaxColumns={2}
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              multiMonthPlugin,
+              interactionPlugin,
+            ]}
+            ref={calendarRef}
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+            }}
+            validRange={{
+              start: semester.startsOn,
+              end: addExclusiveSemesterEnd(semester.endsOn),
+            }}
+            views={{
+              multiMonthYear: {
+                duration: { months: getSemesterMonthCount(semester) },
+                multiMonthMinWidth: 280,
+                titleFormat: { month: "long", year: "numeric" },
               },
-            },
-          }}
-        />
-      </div>
+              timeGridWeek: {
+                dayHeaderFormat: {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "2-digit",
+                },
+              },
+            }}
+          />
+        </div>
+      )}
     </section>
   );
 }
@@ -272,7 +293,8 @@ function isCalendarView(value: string | null): value is CalendarView {
   return (
     value === "timeGridWeek" ||
     value === "dayGridMonth" ||
-    value === "multiMonthYear"
+    value === "multiMonthYear" ||
+    value === "agenda"
   );
 }
 
@@ -342,10 +364,127 @@ function formatPeriodTitle(date: Date, viewType: string) {
     return "Semestre";
   }
 
+  if (viewType === "agenda") {
+    return "Agenda do semestre";
+  }
+
   return new Intl.DateTimeFormat("pt-BR", {
     month: "long",
     year: "numeric",
   })
     .format(date)
     .replace(/^\p{Ll}/u, (letter) => letter.toUpperCase());
+}
+
+function SemesterAgenda({
+  events,
+  onEventSelect,
+}: {
+  events: FullCalendarPublicEvent[];
+  onEventSelect?: (eventId: string, trigger: HTMLElement) => void;
+}) {
+  const groupedEvents = useMemo(() => groupEventsByMonth(events), [events]);
+
+  if (events.length === 0) {
+    return (
+      <div className="rounded-md border border-border bg-surface p-6 text-sm text-text-muted">
+        Nenhum evento encontrado.
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 rounded-md border border-border bg-surface p-4">
+      {groupedEvents.map((group) => (
+        <section className="grid gap-2" key={group.month}>
+          <h3 className="border-b border-border pb-2 font-mono text-xs uppercase tracking-[0.16em] text-text-muted">
+            {group.month}
+          </h3>
+          <div className="grid gap-2">
+            {group.events.map((event) => (
+              <button
+                className="grid gap-1 rounded-sm border border-border bg-background px-3 py-3 text-left transition duration-normal hover:border-brand-orange focus-visible:outline-focus sm:grid-cols-[76px_minmax(0,1fr)_auto] sm:items-center"
+                key={event.id}
+                onClick={(clickEvent) =>
+                  onEventSelect?.(event.id, clickEvent.currentTarget)
+                }
+                type="button"
+              >
+                <span className="font-mono text-xs font-semibold uppercase text-text-muted">
+                  {formatAgendaDay(event)}
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate font-display text-base font-bold text-text-primary">
+                    {event.title}
+                  </span>
+                  <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+                    <span>{formatAgendaTime(event)}</span>
+                    <span aria-hidden="true">-</span>
+                    <span>{getAgendaProjectSummary(event)}</span>
+                  </span>
+                </span>
+                <StatusBadge status={event.extendedProps.status} />
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function groupEventsByMonth(events: FullCalendarPublicEvent[]) {
+  const sortedEvents = [...events].sort((first, second) =>
+    first.start.localeCompare(second.start),
+  );
+  const groups = new Map<string, FullCalendarPublicEvent[]>();
+
+  sortedEvents.forEach((event) => {
+    const month = new Intl.DateTimeFormat("pt-BR", {
+      month: "long",
+      year: "numeric",
+    }).format(new Date(event.start));
+    const current = groups.get(month) ?? [];
+    current.push(event);
+    groups.set(month, current);
+  });
+
+  return [...groups.entries()].map(([month, monthEvents]) => ({
+    events: monthEvents,
+    month,
+  }));
+}
+
+function formatAgendaDay(event: FullCalendarPublicEvent) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+  })
+    .format(new Date(event.start))
+    .replace(".", "");
+}
+
+function formatAgendaTime(event: FullCalendarPublicEvent) {
+  if (event.allDay) {
+    return "Dia inteiro";
+  }
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(event.start));
+}
+
+function getAgendaProjectSummary(event: FullCalendarPublicEvent) {
+  const projects = event.extendedProps.projects;
+
+  if (projects.length === 0) {
+    return "Geral";
+  }
+
+  if (projects.length === 1) {
+    return projects[0].name;
+  }
+
+  return `${projects[0].name} +${projects.length - 1}`;
 }

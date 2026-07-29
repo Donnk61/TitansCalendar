@@ -242,11 +242,11 @@ function EventFilters() {
   const activeFilters = hasActivePublicFilters(filters);
 
   return (
-    <section className="grid gap-2" aria-label="Filtros de eventos">
+    <section className="relative grid gap-2" aria-label="Filtros de eventos">
       <button
         aria-controls="public-calendar-filters"
         aria-expanded={drawerOpen}
-        className="inline-flex min-h-8 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-2.5 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+        className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
         onClick={() => setDrawerOpen((open) => !open)}
         type="button"
       >
@@ -266,7 +266,10 @@ function EventFilters() {
           <ChevronDown aria-hidden="true" className="size-4" />
         )}
       </button>
-      <div className="hidden md:block" id="public-calendar-filters">
+      <div
+        className="absolute left-0 top-[calc(100%+0.5rem)] z-40 hidden md:block"
+        id="public-calendar-filters"
+      >
         {drawerOpen ? <FilterControls layout="desktop" /> : null}
       </div>
       <div className="md:hidden">
@@ -762,7 +765,7 @@ function EventDetailsOverlay() {
     <div
       aria-labelledby="event-detail-title"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-end justify-end bg-background/70 px-3 py-3 backdrop-blur-sm sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-background/70 px-3 py-3 backdrop-blur-sm sm:items-center sm:p-6"
       role="dialog"
     >
       <button
@@ -771,7 +774,7 @@ function EventDetailsOverlay() {
         onClick={actions.closeDetails}
         type="button"
       />
-      <article className="relative flex max-h-[92svh] w-full flex-col overflow-hidden rounded-t-md border border-border bg-surface shadow-soft sm:max-w-md sm:rounded-md">
+      <article className="relative flex max-h-[92svh] w-full flex-col overflow-hidden rounded-t-md border border-border bg-surface shadow-soft sm:max-w-2xl sm:rounded-md">
         <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
           <div className="min-w-0 p-5 pb-0">
             <div className="flex flex-wrap gap-2">

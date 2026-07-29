@@ -37,7 +37,7 @@ export async function sendAdminMagicLink(
   }
 
   try {
-    getSupabaseServerEnv();
+    const env = getSupabaseServerEnv();
     const normalizedEmail = parsed.data.email.toLowerCase();
     const serviceRoleSupabase = createSupabaseServiceRoleClient();
     const { data: authorizedAccess, error: accessError } =
@@ -82,7 +82,7 @@ export async function sendAdminMagicLink(
 
     const supabase = await createSupabaseServerClient();
     const next = getSafeAdminNextPath(parsed.data.next ?? null);
-    const emailRedirectTo = `${await getRequestOrigin()}/admin/auth/callback?next=${encodeURIComponent(next)}`;
+    const emailRedirectTo = `${await getRequestOrigin(env.siteUrl)}/admin/auth/callback?next=${encodeURIComponent(next)}`;
     const { error } = await supabase.auth.signInWithOtp({
       email: normalizedEmail,
       options: {
@@ -183,17 +183,33 @@ async function findAuthUserByEmail(
   };
 }
 
-async function getRequestOrigin() {
+async function getRequestOrigin(siteUrl?: string) {
   const requestHeaders = await headers();
   const host =
     requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
   const protocol = requestHeaders.get("x-forwarded-proto") ?? "https";
 
-  if (!host) {
-    return "http://localhost:3000";
+  if (host && !isLocalhost(host)) {
+    return `${protocol}://${host}`;
   }
 
-  return `${protocol}://${host}`;
+  if (siteUrl && !isLocalhost(new URL(siteUrl).host)) {
+    return siteUrl.replace(/\/$/, "");
+  }
+
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+
+  return "http://localhost:3000";
+}
+
+function isLocalhost(host: string) {
+  return (
+    host.startsWith("localhost") ||
+    host.startsWith("127.0.0.1") ||
+    host.startsWith("[::1]")
+  );
 }
 
 export async function signOutAdmin() {
