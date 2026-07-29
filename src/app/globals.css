@@ -92,6 +92,13 @@ li {
   text-wrap: pretty;
 }
 
+.titans-line-clamp-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .titans-calendar {
   --fc-border-color: var(--border);
   --fc-page-bg-color: var(--surface);
@@ -129,9 +136,15 @@ li {
 }
 
 .titans-calendar .fc-daygrid-day-number {
-  margin: 0.3rem;
-  padding: 0.15rem 0.35rem;
+  margin: 0.32rem;
+  padding: 0.14rem 0.38rem;
   font-variant-numeric: tabular-nums;
+}
+
+.titans-calendar .fc-day-today {
+  background: color-mix(in srgb, var(--brand-orange) 5%, var(--surface));
+  outline: 2px solid var(--brand-orange);
+  outline-offset: -2px;
 }
 
 .titans-calendar .fc-day-today .fc-daygrid-day-number {
@@ -143,10 +156,6 @@ li {
 
 .titans-calendar .fc-daygrid-day-frame {
   min-height: 112px;
-}
-
-.titans-calendar .fc-daygrid-body tr:has(.fc-day-today) .fc-daygrid-day {
-  background: color-mix(in srgb, var(--surface-elevated) 28%, var(--surface));
 }
 
 .titans-calendar .fc-day-other {
@@ -163,6 +172,28 @@ li {
   color: var(--text-primary);
   cursor: pointer;
   overflow: hidden;
+}
+
+.titans-calendar .fc-daygrid-event {
+  margin-inline: 2px;
+}
+
+.titans-calendar .titans-event-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titans-calendar .event-important .titans-event-content {
+  min-height: 2rem;
+}
+
+.titans-calendar .event-important .titans-event-title {
+  display: -webkit-box;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .titans-calendar .fc-event:hover {

@@ -31,15 +31,12 @@ export function WeekPanel({
       : nextEvent
         ? getWeekRange(new Date(nextEvent.start))
         : { start: now, end: now };
-  const visibleLaterEvents = laterEvents.slice(0, 8);
-  const hiddenLaterCount = laterEvents.length - visibleLaterEvents.length;
-
   return (
     <aside
-      className="grid content-start gap-4"
+      className="grid max-h-[calc(100svh-7rem)] grid-rows-[auto_minmax(0,1fr)] gap-4"
       aria-labelledby="week-panel-title"
     >
-      <div>
+      <div className="sticky top-0 z-10 bg-background pb-1">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-orange">
           ESTA SEMANA
         </p>
@@ -58,7 +55,7 @@ export function WeekPanel({
           title="Nenhum evento nesta semana"
         />
       ) : (
-        <div className="grid gap-4">
+        <div className="grid min-h-0 content-start gap-4">
           <section className="grid gap-2">
             <h3 className="text-sm font-bold text-text-secondary">
               Proximo evento
@@ -67,21 +64,16 @@ export function WeekPanel({
           </section>
 
           {laterEvents.length > 0 ? (
-            <section className="grid gap-2">
+            <section className="grid min-h-0 gap-2">
               <h3 className="text-sm font-bold text-text-secondary">Depois</h3>
-              <div className="grid overflow-hidden rounded-md border border-border bg-surface">
-                {visibleLaterEvents.map((event) => (
+              <div className="grid max-h-[52svh] overflow-y-auto rounded-md border border-border bg-surface">
+                {laterEvents.map((event) => (
                   <WeekEventRow
                     event={event}
                     key={event.id}
                     onEventSelect={onEventSelect}
                   />
                 ))}
-                {hiddenLaterCount > 0 ? (
-                  <p className="px-3 py-3 text-sm font-semibold text-text-muted">
-                    +{hiddenLaterCount} eventos
-                  </p>
-                ) : null}
               </div>
             </section>
           ) : null}
@@ -108,7 +100,7 @@ function WeekEventCard({
             {formatShortDate(event)} - {formatEventTime(event)}
           </p>
           <button
-            className="mt-1 block max-w-full truncate text-left font-display text-lg font-bold text-text-primary transition duration-normal hover:text-brand-orange focus-visible:outline-focus"
+            className="titans-line-clamp-2 mt-1 max-w-full text-left font-display text-lg font-bold text-text-primary transition duration-normal hover:text-brand-orange focus-visible:outline-focus"
             onClick={(clickEvent) =>
               onEventSelect?.(event.id, clickEvent.currentTarget)
             }
@@ -145,17 +137,17 @@ function WeekEventRow({
 
   return (
     <button
-      className="grid gap-1 border-b border-border px-3 py-3 text-left transition duration-normal last:border-b-0 hover:bg-surface-muted focus-visible:outline-focus"
+      className="grid gap-0.5 border-b border-border px-3 py-2.5 text-left transition duration-normal last:border-b-0 hover:bg-surface-muted focus-visible:outline-focus"
       onClick={(clickEvent) =>
         onEventSelect?.(event.id, clickEvent.currentTarget)
       }
       title={event.title}
       type="button"
     >
-      <span className="text-xs font-semibold uppercase tracking-[0.08em] text-text-muted">
+      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.07em] text-text-muted">
         {formatShortDate(event)} - {formatEventTime(event)}
       </span>
-      <span className="truncate font-display text-sm font-bold text-text-primary">
+      <span className="titans-line-clamp-2 font-display text-sm font-bold leading-snug text-text-primary">
         {event.title}
       </span>
       <span className="flex min-w-0 items-center gap-2 text-xs text-text-secondary">

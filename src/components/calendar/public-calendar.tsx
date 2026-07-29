@@ -35,7 +35,6 @@ type CalendarView =
 
 type PublicCalendarProps = {
   events: FullCalendarPublicEvent[];
-  eventCount?: number;
   filtersSlot?: ReactNode;
   onEventSelect?: (eventId: string, trigger: HTMLElement) => void;
   semester: PublicSemester;
@@ -52,7 +51,6 @@ const viewItems = [
 
 export function PublicCalendar({
   events,
-  eventCount = events.length,
   filtersSlot,
   onEventSelect,
   semester,
@@ -105,13 +103,8 @@ export function PublicCalendar({
 
   return (
     <section className="grid gap-2" aria-label="Calendario publico">
-      <div className="flex flex-col gap-3 rounded-md border border-border bg-surface px-3 py-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex min-h-11 items-center rounded-xs border border-border bg-background px-3 text-xs font-semibold text-text-secondary">
-            {eventCount} eventos
-          </span>
-          {filtersSlot}
-        </div>
+      <div className="flex flex-col gap-2 py-1 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap items-center gap-2">{filtersSlot}</div>
         <SegmentedControl
           ariaLabel="Visualizacao do calendario"
           items={viewItems}
@@ -236,15 +229,19 @@ function renderEventContent(arg: EventContentArg) {
   const status = event.extendedProps.status as EventStatus;
   const typeConfig = eventTypeConfig[type as keyof typeof eventTypeConfig];
   const statusConfig = eventStatusConfig[status];
+  const typeLabel = typeConfig?.label ?? type;
+  const eventLabel = [arg.timeText, event.title, typeLabel]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div
-      className="flex min-w-0 items-center gap-1.5 px-1.5 py-1 text-sm leading-tight"
-      title={event.title}
+      className="titans-event-content flex min-w-0 items-start gap-1 px-1 py-0.5 text-sm leading-tight"
+      title={eventLabel}
     >
       <span
         aria-hidden="true"
-        className="size-2 shrink-0 rounded-full"
+        className="mt-1 size-1.5 shrink-0 rounded-full"
         style={{ background: typeConfig?.token ?? "var(--brand-orange)" }}
       />
       {arg.timeText ? (
@@ -252,7 +249,9 @@ function renderEventContent(arg: EventContentArg) {
           {formatCompactTime(arg.timeText)}
         </span>
       ) : null}
-      <span className="min-w-0 truncate font-medium">{event.title}</span>
+      <span className="titans-event-title min-w-0 font-medium">
+        {event.title}
+      </span>
       <CompactStatusIcon label={statusConfig?.label} status={status} />
     </div>
   );

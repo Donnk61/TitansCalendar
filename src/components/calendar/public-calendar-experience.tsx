@@ -203,7 +203,6 @@ export function PublicCalendarExperience({
           ) : null}
           {isDesktop ? (
             <DesktopPublicCalendar
-              eventCount={filteredEvents.length}
               events={filteredEvents.map(toFullCalendarEvent)}
               filtersSlot={<EventFilters />}
               onEventSelect={actions.selectEvent}
@@ -280,7 +279,7 @@ function EventFilters() {
       <button
         aria-controls="public-calendar-filters"
         aria-expanded={drawerOpen}
-        className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+        className="inline-flex min-h-9 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
         onClick={() => setDrawerOpen((open) => !open)}
         type="button"
       >
@@ -291,6 +290,9 @@ function EventFilters() {
             ativos
           </span>
         ) : null}
+        <span aria-hidden="true" className="text-text-muted">
+          ·
+        </span>
         <span className="text-[0.72rem] text-text-muted">
           {filteredEvents.length} eventos
         </span>
