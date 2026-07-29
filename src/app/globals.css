@@ -123,7 +123,7 @@ li {
   --fc-page-bg-color: var(--surface);
   --fc-neutral-bg-color: var(--surface-muted);
   --fc-list-event-hover-bg-color: var(--surface-elevated);
-  --fc-today-bg-color: color-mix(in srgb, var(--brand-orange) 12%, transparent);
+  --fc-today-bg-color: transparent;
   --fc-now-indicator-color: var(--brand-orange);
   --fc-small-font-size: 0.78rem;
 }
@@ -161,15 +161,13 @@ li {
 }
 
 .titans-calendar .fc-day-today {
-  background: color-mix(in srgb, var(--brand-orange) 5%, var(--surface));
-  outline: 2px solid var(--brand-orange);
-  outline-offset: -2px;
+  background: transparent;
+  outline: 1px solid var(--brand-orange);
+  outline-offset: -1px;
 }
 
 .titans-calendar .fc-day-today .fc-daygrid-day-number {
-  border-radius: 999px;
-  background: var(--brand-orange);
-  color: var(--background);
+  color: var(--brand-orange);
   font-weight: 800;
 }
 
