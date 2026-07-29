@@ -47,15 +47,15 @@ export default async function EditAdminEventPage({
   const initialValues = toFormValues(event);
 
   return (
-    <section className="grid gap-6">
-      <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
           Eventos
         </p>
-        <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+        <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
           Editar Evento
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+        <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
           Alterações usam controle de concorrência pelo horário original de
           atualização.
         </p>
@@ -87,14 +87,14 @@ export default async function EditAdminEventPage({
       {state.access.role === "admin" ? (
         <form
           action={deleteAdminEventPermanently}
-          className="grid gap-4 rounded-sm border border-danger/45 bg-danger/10 p-5"
+          className="grid min-w-0 gap-4 rounded-sm border border-danger/45 bg-danger/10 p-3 sm:p-5"
         >
           <input name="eventId" type="hidden" value={event.id} />
-          <div>
-            <h2 className="font-display text-lg font-semibold text-text-primary">
+          <div className="min-w-0">
+            <h2 className="break-words font-display text-lg font-semibold text-text-primary">
               Exclusão Definitiva
             </h2>
-            <p className="mt-1 text-sm leading-6 text-text-secondary">
+            <p className="mt-1 break-words text-sm leading-6 text-text-secondary">
               Use apenas quando cancelar não for suficiente. Digite EXCLUIR para
               confirmar.
             </p>

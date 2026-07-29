@@ -24,7 +24,7 @@ export function LoginForm({ next }: { next: string }) {
   const [state, action, isPending] = useActionState(signInAdmin, initialState);
 
   return (
-    <form action={action} className="grid gap-5">
+    <form action={action} className="grid min-w-0 gap-5">
       <input name="next" type="hidden" value={next} />
       <Field>
         <Label htmlFor="admin-username">Usuario</Label>

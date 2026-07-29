@@ -34,15 +34,15 @@ export default async function AdminAccessPage() {
   const editors = await listEditorAccess();
 
   return (
-    <section className="grid gap-6">
-      <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
           Segurança
         </p>
-        <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+        <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
           Acessos administrativos
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+        <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
           Gerencie quais e-mails podem editar o cronograma. As permissões são
           validadas no servidor em cada action.
         </p>
@@ -50,7 +50,7 @@ export default async function AdminAccessPage() {
 
       <form
         action={createEditorAccess}
-        className="grid gap-4 rounded-sm border border-border bg-surface p-5 md:grid-cols-[1fr_1fr_160px_auto]"
+        className="grid min-w-0 grid-cols-1 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5 md:grid-cols-[1fr_1fr_160px_auto]"
       >
         <Field>
           <Label htmlFor="access-email">E-mail</Label>
@@ -88,7 +88,7 @@ export default async function AdminAccessPage() {
         remoção ou rebaixamento do último administrador ativo.
       </InlineAlert>
 
-      <div className="overflow-x-auto rounded-sm border border-border bg-surface">
+      <div className="max-w-full min-w-0 overflow-x-auto rounded-sm border border-border bg-surface">
         <table className="w-full min-w-[760px] border-collapse text-sm">
           <thead className="bg-surface-muted text-left text-text-secondary">
             <tr>

@@ -49,25 +49,25 @@ export default async function AdminEventsPage({
   ]);
 
   return (
-    <section className="grid gap-6">
-      <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="flex min-w-0 flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
             Eventos
           </p>
-          <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+          <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
             Lista Administrativa
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+          <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
             Busque, filtre, edite e cancele eventos do semestre ativo.
           </p>
         </div>
         <Link
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-sm border border-brand-orange bg-brand-orange px-4 text-sm font-semibold text-background transition duration-normal hover:bg-brand-amber focus-visible:outline-focus"
+          className="inline-flex min-h-10 min-w-0 items-center justify-center gap-2 rounded-sm border border-brand-orange bg-brand-orange px-4 text-sm font-semibold text-background transition duration-normal hover:bg-brand-amber focus-visible:outline-focus"
           href="/admin/events/new"
         >
-          <CalendarPlus aria-hidden="true" className="size-4" />
-          Novo Evento
+          <CalendarPlus aria-hidden="true" className="size-4 shrink-0" />
+          <span className="min-w-0 truncate">Novo Evento</span>
         </Link>
       </div>
 
@@ -77,7 +77,7 @@ export default async function AdminEventsPage({
         </InlineAlert>
       ) : null}
 
-      <form className="grid gap-4 rounded-sm border border-border bg-surface p-5 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]">
+      <form className="grid min-w-0 grid-cols-1 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]">
         <Field>
           <Label htmlFor="q">Busca</Label>
           <Input
@@ -136,7 +136,7 @@ export default async function AdminEventsPage({
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-sm border border-border bg-surface">
+      <div className="max-w-full min-w-0 overflow-x-auto rounded-sm border border-border bg-surface">
         <table className="w-full min-w-[900px] border-collapse text-sm">
           <thead className="bg-surface-muted text-left text-text-secondary">
             <tr>

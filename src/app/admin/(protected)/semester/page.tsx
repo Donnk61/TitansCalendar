@@ -37,28 +37,28 @@ export default async function AdminSemesterPage() {
   const data = await getAdminMaintenanceData();
 
   return (
-    <section className="grid gap-6">
-      <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
           Manutenção
         </p>
-        <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+        <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
           Ciclo do Semestre
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+        <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
           Arquive períodos encerrados, prepare o próximo semestre e mantenha
           cadastros usados pelo calendário.
         </p>
       </div>
 
       {data.activeSemester ? (
-        <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="font-display text-xl font-semibold text-text-primary">
+        <section className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+          <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="break-words font-display text-xl font-semibold text-text-primary">
                 Semestre Ativo
               </h2>
-              <p className="mt-1 text-sm text-text-secondary">
+              <p className="mt-1 break-words text-sm text-text-secondary">
                 {data.summary.events} eventos, {data.summary.series} séries e{" "}
                 {data.summary.announcements} avisos serão preservados ao
                 arquivar.
@@ -68,7 +68,7 @@ export default async function AdminSemesterPage() {
           </div>
           <form
             action={updateActiveSemester}
-            className="grid gap-4 md:grid-cols-[2fr_1fr_1fr_auto]"
+            className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[2fr_1fr_1fr_auto]"
           >
             <input name="id" type="hidden" value={data.activeSemester.id} />
             <Field>
@@ -109,7 +109,7 @@ export default async function AdminSemesterPage() {
               Arquivar remove o semestre da leitura pública e mantém todos os
               dados para auditoria interna.
             </InlineAlert>
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
               <Input
                 autoComplete="off"
                 name="confirmation"
@@ -128,13 +128,13 @@ export default async function AdminSemesterPage() {
         </InlineAlert>
       )}
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-        <h2 className="font-display text-xl font-semibold text-text-primary">
+      <section className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+        <h2 className="break-words font-display text-xl font-semibold text-text-primary">
           Criar Próximo Semestre
         </h2>
         <form
           action={createSemester}
-          className="grid gap-4 md:grid-cols-[2fr_1fr_1fr_auto]"
+          className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[2fr_1fr_1fr_auto]"
         >
           <Field>
             <Label htmlFor="semester-name">Nome</Label>
@@ -162,32 +162,32 @@ export default async function AdminSemesterPage() {
             />
           </div>
         </form>
-        <p className="text-sm leading-6 text-text-muted">
+        <p className="break-words text-sm leading-6 text-text-muted">
           Eventos e avisos não são copiados para o novo semestre.
         </p>
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-        <h2 className="font-display text-xl font-semibold text-text-primary">
+      <section className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+        <h2 className="break-words font-display text-xl font-semibold text-text-primary">
           Semestres
         </h2>
-        <div className="grid gap-2">
+        <div className="grid min-w-0 gap-2">
           {data.semesters.map((semester) => (
             <form
               action={activateSemester}
-              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-b-0"
+              className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-b-0"
               key={semester.id}
             >
               <input name="id" type="hidden" value={semester.id} />
-              <div>
-                <p className="font-semibold text-text-primary">
+              <div className="min-w-0">
+                <p className="break-words font-semibold text-text-primary">
                   {semester.name}
                 </p>
-                <p className="text-sm text-text-muted">
+                <p className="break-words text-sm text-text-muted">
                   {semester.starts_on} até {semester.ends_on}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 {semester.is_active ? (
                   <Badge tone="success">Ativo</Badge>
                 ) : null}
@@ -206,13 +206,13 @@ export default async function AdminSemesterPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-        <h2 className="font-display text-xl font-semibold text-text-primary">
+      <section className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+        <h2 className="break-words font-display text-xl font-semibold text-text-primary">
           Projetos
         </h2>
         <form
           action={upsertProject}
-          className="grid gap-4 rounded-sm border border-border bg-surface-muted p-4 md:grid-cols-[1fr_1fr_120px_auto]"
+          className="grid min-w-0 grid-cols-1 gap-4 rounded-sm border border-border bg-surface-muted p-3 sm:p-4 md:grid-cols-[1fr_1fr_120px_auto]"
         >
           <Field>
             <Label htmlFor="project-name">Nome</Label>
@@ -244,11 +244,11 @@ export default async function AdminSemesterPage() {
           </div>
           <input name="isActive" type="hidden" value="on" />
         </form>
-        <div className="grid gap-3">
+        <div className="grid min-w-0 gap-3">
           {data.projects.map((project) => (
             <form
               action={upsertProject}
-              className="grid gap-3 rounded-sm border border-border bg-background p-3 md:grid-cols-[1fr_1fr_120px_160px_auto]"
+              className="grid min-w-0 grid-cols-1 gap-3 rounded-sm border border-border bg-background p-3 md:grid-cols-[1fr_1fr_120px_160px_auto]"
               key={project.id}
             >
               <input name="id" type="hidden" value={project.id} />
@@ -282,15 +282,15 @@ export default async function AdminSemesterPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 rounded-sm border border-border bg-surface p-5">
-        <h2 className="font-display text-xl font-semibold text-text-primary">
+      <section className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+        <h2 className="break-words font-display text-xl font-semibold text-text-primary">
           Tipos de Evento
         </h2>
-        <div className="grid gap-3">
+        <div className="grid min-w-0 gap-3">
           {data.eventTypes.map((type) => (
             <form
               action={updateEventType}
-              className="grid gap-3 rounded-sm border border-border bg-background p-3 md:grid-cols-[1fr_1fr_1fr_120px_160px_auto]"
+              className="grid min-w-0 grid-cols-1 gap-3 rounded-sm border border-border bg-background p-3 md:grid-cols-[1fr_1fr_1fr_120px_160px_auto]"
               key={type.slug}
             >
               <input name="slug" type="hidden" value={type.slug} />

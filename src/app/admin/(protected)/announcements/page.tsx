@@ -31,15 +31,15 @@ export default async function AdminAnnouncementsPage() {
   ]);
 
   return (
-    <section className="grid gap-6">
-      <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
           Avisos
         </p>
-        <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+        <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
           Avisos do Calendário
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+        <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
           Publique avisos com vigência automática e relacionamento opcional com
           eventos.
         </p>
@@ -47,18 +47,18 @@ export default async function AdminAnnouncementsPage() {
 
       <AnnouncementForm events={eventChoices} />
 
-      <div className="grid gap-4">
+      <div className="grid min-w-0 gap-4">
         {announcements.map((announcement) => (
           <section
-            className="grid gap-4 rounded-sm border border-border bg-surface p-5"
+            className="grid min-w-0 gap-4 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5"
             key={announcement.id}
           >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h2 className="font-display text-lg font-semibold text-text-primary">
+            <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="break-words font-display text-lg font-semibold text-text-primary">
                   {announcement.title}
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-text-secondary">
+                <p className="mt-1 break-words text-sm leading-6 text-text-secondary">
                   {announcement.body}
                 </p>
               </div>
@@ -113,12 +113,12 @@ function AnnouncementForm({
   return (
     <form
       action={upsertAnnouncement}
-      className="grid gap-4 rounded-sm border border-border bg-surface p-5"
+      className="grid min-w-0 gap-4 rounded-sm border border-border bg-surface p-3 sm:p-5"
     >
       {announcement ? (
         <input name="id" type="hidden" value={announcement.id} />
       ) : null}
-      <div className="grid gap-4 md:grid-cols-[2fr_180px_160px]">
+      <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-[2fr_180px_160px]">
         <Field>
           <Label htmlFor={`title-${announcement?.id ?? "new"}`}>Título</Label>
           <Input
@@ -161,7 +161,7 @@ function AnnouncementForm({
           placeholder="Mensagem exibida no calendário público…"
         />
       </Field>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
         <Field>
           <Label htmlFor={`starts-${announcement?.id ?? "new"}`}>Início</Label>
           <Input

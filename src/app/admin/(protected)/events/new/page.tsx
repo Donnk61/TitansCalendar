@@ -26,15 +26,15 @@ export default async function NewAdminEventPage() {
   }
 
   return (
-    <section className="grid gap-6">
-      <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
           Eventos
         </p>
-        <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+        <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
           Novo Evento
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+        <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
           Crie evento simples ou recorrente dentro do semestre ativo.
         </p>
       </div>

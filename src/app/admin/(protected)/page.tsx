@@ -47,21 +47,21 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <section className="grid gap-6">
-      <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <section className="grid min-w-0 gap-6 overflow-hidden">
+      <div className="flex min-w-0 flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
             Área administrativa
           </p>
-          <h1 className="mt-3 font-display text-3xl font-black tracking-normal text-text-primary">
+          <h1 className="mt-3 break-words font-display text-3xl font-black tracking-normal text-text-primary">
             Painel do cronograma
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+          <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-text-secondary">
             Acompanhe o semestre ativo, pendências editoriais e avisos vigentes
             antes de publicar novas alterações.
           </p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-row">
           <AdminActionLink
             href="/admin/events/new"
             icon={<CalendarPlus aria-hidden="true" className="size-4" />}
@@ -78,7 +78,7 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid min-w-0 gap-4 md:grid-cols-3">
         <MetricCard
           label="Semestre ativo"
           value={data.activeSemester?.name ?? "Sem semestre"}
@@ -101,7 +101,7 @@ export default async function AdminDashboardPage() {
           title="Nenhum semestre ativo"
         />
       ) : (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid min-w-0 gap-4 xl:grid-cols-2">
           <AdminList
             empty="Nenhum evento futuro encontrado."
             icon={<CalendarPlus aria-hidden="true" className="size-4" />}
@@ -166,15 +166,15 @@ function AdminActionLink({
   return (
     <Link
       className={cn(
-        "inline-flex min-h-10 items-center justify-center gap-2 rounded-sm border px-4 text-sm font-semibold transition duration-normal focus-visible:outline-focus",
+        "inline-flex min-h-10 min-w-0 items-center justify-center gap-2 rounded-sm border px-4 text-sm font-semibold transition duration-normal focus-visible:outline-focus",
         variant === "primary"
           ? "border-brand-orange bg-brand-orange text-background hover:bg-brand-amber"
           : "border-border-strong bg-surface-elevated text-text-primary hover:border-brand-orange",
       )}
       href={href}
     >
-      {icon}
-      {children}
+      <span className="shrink-0">{icon}</span>
+      <span className="min-w-0 truncate">{children}</span>
     </Link>
   );
 }
@@ -189,13 +189,13 @@ function MetricCard({
   value: number | string;
 }) {
   return (
-    <div className="rounded-sm border border-border bg-surface p-5">
-      <p className="text-sm text-text-muted">{label}</p>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="font-display text-2xl font-bold text-text-primary">
+    <div className="min-w-0 overflow-hidden rounded-sm border border-border bg-surface p-3 sm:p-5">
+      <p className="break-words text-sm text-text-muted">{label}</p>
+      <div className="mt-3 flex min-w-0 items-center justify-between gap-3">
+        <p className="min-w-0 break-words font-display text-2xl font-bold text-text-primary">
           {value}
         </p>
-        {badge}
+        <span className="shrink-0">{badge}</span>
       </div>
     </div>
   );
@@ -219,10 +219,10 @@ function AdminList({
   title: string;
 }) {
   return (
-    <section className="rounded-sm border border-border bg-surface">
-      <div className="flex min-h-14 items-center gap-2 border-b border-border px-4">
-        <span className="text-brand-orange">{icon}</span>
-        <h2 className="font-display text-lg font-semibold text-text-primary">
+    <section className="min-w-0 overflow-hidden rounded-sm border border-border bg-surface">
+      <div className="flex min-h-14 min-w-0 items-center gap-2 border-b border-border px-4">
+        <span className="shrink-0 text-brand-orange">{icon}</span>
+        <h2 className="min-w-0 break-words font-display text-lg font-semibold text-text-primary">
           {title}
         </h2>
       </div>
@@ -231,10 +231,10 @@ function AdminList({
           {items.map((item) => (
             <li key={`${item.href}-${item.title}`}>
               <Link
-                className="grid gap-2 px-4 py-3 transition duration-normal hover:bg-surface-muted focus-visible:outline-focus"
+                className="grid min-w-0 gap-2 px-4 py-3 transition duration-normal hover:bg-surface-muted focus-visible:outline-focus"
                 href={item.href}
               >
-                <span className="font-semibold text-text-primary">
+                <span className="break-words font-semibold text-text-primary">
                   {item.title}
                 </span>
                 <span className="flex flex-wrap items-center gap-2 text-sm text-text-muted">

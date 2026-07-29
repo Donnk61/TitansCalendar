@@ -43,8 +43,8 @@ export function AdminShell({
       >
         Pular para o conteúdo
       </a>
-      <header className="border-b border-border bg-surface px-[var(--space-shell-x)]">
-        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4">
+      <header className="w-full overflow-hidden border-b border-border bg-surface px-4 sm:px-[var(--space-shell-x)]">
+        <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-4">
             <BrandMark />
             <span className="hidden h-6 w-px bg-border sm:block" />
@@ -52,7 +52,7 @@ export function AdminShell({
               Administração
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <button
               aria-label="Avisos administrativos"
               className="grid size-10 place-items-center rounded-sm border border-border bg-surface-muted text-text-secondary transition duration-normal hover:text-text-primary focus-visible:outline-focus"
@@ -80,23 +80,23 @@ export function AdminShell({
           </div>
         </div>
       </header>
-      <div className="mx-auto grid max-w-7xl gap-4 px-[var(--space-shell-x)] py-4 sm:gap-6 sm:py-6 lg:grid-cols-[220px_1fr]">
-        <aside className="lg:sticky lg:top-6 lg:self-start">
+      <div className="mx-auto grid w-full max-w-7xl gap-4 overflow-hidden px-4 py-4 sm:gap-6 sm:px-[var(--space-shell-x)] sm:py-6 lg:grid-cols-[220px_1fr]">
+        <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
           <nav
             aria-label="Navegação administrativa"
-            className="flex gap-2 overflow-x-auto lg:grid"
+            className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1"
           >
             {navigation.map((item) => {
               const Icon = item.icon;
 
               return (
                 <Link
-                  className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+                  className="inline-flex min-h-10 min-w-0 items-center justify-center gap-2 rounded-sm border border-border bg-surface px-2 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus lg:justify-start lg:px-3"
                   href={item.href}
                   key={item.href}
                 >
-                  <Icon aria-hidden="true" className="size-4" />
-                  {item.label}
+                  <Icon aria-hidden="true" className="size-4 shrink-0" />
+                  <span className="min-w-0 truncate">{item.label}</span>
                 </Link>
               );
             })}

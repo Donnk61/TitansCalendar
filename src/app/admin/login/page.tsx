@@ -25,21 +25,21 @@ export default async function AdminLoginPage({
   }
 
   return (
-    <main className="min-h-svh bg-background px-[var(--space-shell-x)] py-10 text-text-primary">
-      <section className="mx-auto grid max-w-md gap-6">
-        <div className="grid gap-3">
+    <main className="min-h-svh w-full overflow-x-hidden bg-background px-4 py-10 text-text-primary sm:px-[var(--space-shell-x)]">
+      <section className="mx-auto grid w-full min-w-0 max-w-md gap-6 overflow-hidden">
+        <div className="grid min-w-0 gap-3">
           <span className="grid size-11 place-items-center rounded-sm border border-brand-orange/45 bg-surface text-brand-orange">
             <ShieldCheck aria-hidden="true" className="size-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
               Area administrativa
             </p>
-            <h1 className="mt-2 font-display text-3xl font-black tracking-normal">
+            <h1 className="mt-2 break-words font-display text-3xl font-black tracking-normal">
               Login restrito
             </h1>
           </div>
-          <p className="text-sm leading-6 text-text-secondary">
+          <p className="break-words text-sm leading-6 text-text-secondary">
             Entre com o usuario e a senha administrativos para acessar o painel
             do cronograma.
           </p>
@@ -53,7 +53,7 @@ export default async function AdminLoginPage({
         ) : null}
 
         {state.status === "unauthorized" ? (
-          <section className="grid gap-4">
+          <section className="grid min-w-0 gap-4">
             <InlineAlert title="Sessao sem permissao" tone="danger">
               A sessao atual nao tem permissao para acessar o painel.
             </InlineAlert>
@@ -64,7 +64,7 @@ export default async function AdminLoginPage({
             </form>
           </section>
         ) : (
-          <div className="rounded-sm border border-border bg-surface p-5">
+          <div className="min-w-0 rounded-sm border border-border bg-surface p-3 sm:p-5">
             <LoginForm next={next} />
           </div>
         )}
