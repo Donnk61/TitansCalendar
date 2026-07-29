@@ -108,12 +108,36 @@ export async function updateActiveSemester(formData: FormData) {
 export async function activateSemester(formData: FormData) {
   const id = uuidSchema.parse(formData.get("id"));
   const { supabase } = await requireAdmin();
-  const { error } = await supabase.rpc("activate_semester", {
-    target_semester_id: id,
-  });
+  const { data: targetSemester, error: targetError } = await supabase
+    .from("semesters")
+    .select("id")
+    .eq("id", id)
+    .is("archived_at", null)
+    .maybeSingle();
 
-  if (error) {
-    throw new Error("Não foi possível ativar o semestre.");
+  if (targetError || !targetSemester) {
+    throw new Error("Nao foi possivel ativar o semestre.");
+  }
+
+  const { error: deactivateError } = await supabase
+    .from("semesters")
+    .update({ is_active: false })
+    .eq("is_active", true);
+
+  if (deactivateError) {
+    throw new Error("Nao foi possivel ativar o semestre.");
+  }
+
+  const { error: activateError } = await supabase
+    .from("semesters")
+    .update({
+      archived_at: null,
+      is_active: true,
+    })
+    .eq("id", id);
+
+  if (activateError) {
+    throw new Error("Nao foi possivel ativar o semestre.");
   }
 
   await revalidatePublicCalendar();
@@ -129,12 +153,20 @@ export async function archiveActiveSemester(formData: FormData) {
     throw new Error("Digite ARQUIVAR para confirmar.");
   }
 
-  const { error } = await supabase.rpc("archive_active_semester", {
-    target_semester_id: id,
-  });
+  const { data, error } = await supabase
+    .from("semesters")
+    .update({
+      archived_at: new Date().toISOString(),
+      is_active: false,
+    })
+    .eq("id", id)
+    .eq("is_active", true)
+    .is("archived_at", null)
+    .select("id")
+    .maybeSingle();
 
-  if (error) {
-    throw new Error("Não foi possível arquivar o semestre.");
+  if (error || !data) {
+    throw new Error("Nao foi possivel arquivar o semestre.");
   }
 
   await revalidatePublicCalendar();
