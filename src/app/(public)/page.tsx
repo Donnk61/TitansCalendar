@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPublicCalendarHomeData } from "@/server/queries/public-home";
 
+export const dynamic = "force-dynamic";
+
 export default async function PublicHomePage() {
   const data = await getPublicCalendarHomeData();
 
