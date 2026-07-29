@@ -187,6 +187,7 @@ li {
 
 .titans-calendar .fc-event {
   border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--surface-elevated) 70%, transparent);
   color: var(--text-primary);
   cursor: pointer;
@@ -194,7 +195,7 @@ li {
 }
 
 .titans-calendar .fc-daygrid-event {
-  margin-inline: 2px;
+  margin: 3px 4px;
 }
 
 .titans-calendar .titans-event-title {
