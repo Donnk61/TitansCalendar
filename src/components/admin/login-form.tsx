@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Mail } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -11,54 +11,53 @@ import {
   Label,
 } from "@/components/ui/field";
 import {
-  sendAdminMagicLink,
+  signInAdmin,
   type LoginActionState,
 } from "@/server/actions/admin-auth";
 
 const initialState: LoginActionState = {
-  status: "idle",
   message: "",
+  status: "idle",
 };
 
 export function LoginForm({ next }: { next: string }) {
-  const [state, action, isPending] = useActionState(
-    sendAdminMagicLink,
-    initialState,
-  );
+  const [state, action, isPending] = useActionState(signInAdmin, initialState);
 
   return (
     <form action={action} className="grid gap-5">
       <input name="next" type="hidden" value={next} />
       <Field>
-        <Label htmlFor="admin-email">E-mail autorizado</Label>
+        <Label htmlFor="admin-username">Usuario</Label>
         <Input
-          autoComplete="email"
-          id="admin-email"
-          inputMode="email"
-          name="email"
-          placeholder="editor@titans.com.br…"
+          autoComplete="username"
+          id="admin-username"
+          name="username"
+          placeholder="AdminTitans"
           spellCheck={false}
-          type="email"
+          type="text"
         />
-        <FieldHint>
-          Use o e-mail cadastrado na allowlist administrativa.
-        </FieldHint>
+        <FieldHint>Use o usuario administrativo da TITANS.</FieldHint>
+      </Field>
+      <Field>
+        <Label htmlFor="admin-password">Senha</Label>
+        <Input
+          autoComplete="current-password"
+          id="admin-password"
+          name="password"
+          placeholder="Senha administrativa"
+          type="password"
+        />
         {state.status === "error" ? (
           <FieldError>{state.message}</FieldError>
         ) : null}
       </Field>
       <Button
         isLoading={isPending}
-        leadingIcon={<Mail aria-hidden="true" className="size-4" />}
+        leadingIcon={<LogIn aria-hidden="true" className="size-4" />}
         type="submit"
       >
-        Enviar Magic Link
+        Entrar
       </Button>
-      {state.status === "sent" ? (
-        <p aria-live="polite" className="text-sm leading-6 text-success">
-          {state.message}
-        </p>
-      ) : null}
     </form>
   );
 }

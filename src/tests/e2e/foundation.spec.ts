@@ -27,7 +27,8 @@ test("admin login opens without the protected shell", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Login restrito" }),
   ).toBeVisible();
-  await expect(page.getByLabel("E-mail autorizado")).toBeVisible();
+  await expect(page.getByLabel("Usuario")).toBeVisible();
+  await expect(page.getByLabel("Senha")).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
 });
 

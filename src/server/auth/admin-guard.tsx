@@ -1,8 +1,8 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
-import { InlineAlert } from "@/components/ui/inline-alert";
 import { Button } from "@/components/ui/button";
+import { InlineAlert } from "@/components/ui/inline-alert";
 import { signOutAdmin } from "@/server/actions/admin-auth";
 import {
   getAdminSessionState,
@@ -54,9 +54,9 @@ export function AdminAccessProblem({
 }) {
   if (reason === "unconfigured") {
     return (
-      <InlineAlert title="Supabase não configurado" tone="warning">
-        Configure `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-        para ativar login, sessão e consultas do painel administrativo.
+      <InlineAlert title="Supabase nao configurado" tone="warning">
+        Configure as variaveis do Supabase, incluindo
+        `SUPABASE_SERVICE_ROLE_KEY`, para ativar o painel administrativo.
       </InlineAlert>
     );
   }
@@ -64,22 +64,21 @@ export function AdminAccessProblem({
   if (reason === "admin-only") {
     return (
       <InlineAlert title="Acesso restrito a administradores" tone="danger">
-        Esta área gerencia quem pode editar o cronograma. Entre com uma conta
-        administradora para continuar.
+        Esta area gerencia quem pode editar o cronograma. Entre com a credencial
+        administrativa para continuar.
       </InlineAlert>
     );
   }
 
   return (
     <section className="grid gap-4">
-      <InlineAlert title="Acesso não autorizado" tone="danger">
-        Sua sessão está ativa, mas o e-mail não está habilitado na allowlist
-        administrativa.
+      <InlineAlert title="Acesso nao autorizado" tone="danger">
+        Sua sessao esta ativa, mas nao tem permissao administrativa.
       </InlineAlert>
       <form action={signOutAdmin}>
         <input name="next" type="hidden" value={nextPath} />
         <Button type="submit" variant="secondary">
-          Sair e trocar e-mail
+          Sair
         </Button>
       </form>
     </section>

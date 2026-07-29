@@ -1,4 +1,8 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
+import {
+  getAdminSessionState,
+  getStaticAdminUser,
+} from "@/server/auth/admin-session";
 
 export class AuthorizationError extends Error {
   constructor(message = "Acesso negado.") {
@@ -8,37 +12,24 @@ export class AuthorizationError extends Error {
 }
 
 export async function requireAuthenticatedUser() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const state = await getAdminSessionState();
 
-  if (error || !user?.email) {
-    throw new AuthorizationError("Sessão autenticada obrigatória.");
+  if (state.status !== "authorized") {
+    throw new AuthorizationError("Sessao administrativa obrigatoria.");
   }
 
-  return { supabase, user };
+  return {
+    supabase: createSupabaseServiceRoleClient(),
+    user: getStaticAdminUser(),
+  };
 }
 
 export async function requireEditor() {
-  const context = await requireAuthenticatedUser();
-  const { data, error } = await context.supabase.rpc("is_editor");
-
-  if (error || data !== true) {
-    throw new AuthorizationError("Editor autorizado obrigatório.");
-  }
-
-  return context;
+  return requireAuthenticatedUser();
 }
 
 export async function requireAdmin() {
   const context = await requireAuthenticatedUser();
-  const { data, error } = await context.supabase.rpc("is_admin");
-
-  if (error || data !== true) {
-    throw new AuthorizationError("Administrador obrigatório.");
-  }
 
   return context;
 }

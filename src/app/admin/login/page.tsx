@@ -33,34 +33,33 @@ export default async function AdminLoginPage({
           </span>
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-orange">
-              Área administrativa
+              Area administrativa
             </p>
             <h1 className="mt-2 font-display text-3xl font-black tracking-normal">
               Login restrito
             </h1>
           </div>
           <p className="text-sm leading-6 text-text-secondary">
-            Receba um Magic Link no e-mail autorizado para acessar o painel do
-            cronograma.
+            Entre com o usuario e a senha administrativos para acessar o painel
+            do cronograma.
           </p>
         </div>
 
         {state.status === "unconfigured" ? (
-          <InlineAlert title="Supabase não configurado" tone="warning">
-            Configure as variáveis públicas do Supabase para ativar o envio de
-            Magic Link.
+          <InlineAlert title="Supabase nao configurado" tone="warning">
+            Configure as variaveis do Supabase, incluindo a service role, para
+            ativar o painel administrativo.
           </InlineAlert>
         ) : null}
 
         {state.status === "unauthorized" ? (
           <section className="grid gap-4">
-            <InlineAlert title="E-mail sem permissão" tone="danger">
-              A sessão atual existe, mas o e-mail não está ativo na allowlist
-              administrativa.
+            <InlineAlert title="Sessao sem permissao" tone="danger">
+              A sessao atual nao tem permissao para acessar o painel.
             </InlineAlert>
             <form action={signOutAdmin}>
               <Button type="submit" variant="secondary">
-                Sair e usar outro e-mail
+                Sair
               </Button>
             </form>
           </section>
@@ -71,14 +70,13 @@ export default async function AdminLoginPage({
         )}
 
         {error === "expired" ? (
-          <InlineAlert title="Link expirado" tone="warning">
-            Solicite um novo Magic Link para continuar. Links antigos podem
-            expirar ou ser usados apenas uma vez.
+          <InlineAlert title="Sessao expirada" tone="warning">
+            Entre novamente para continuar.
           </InlineAlert>
         ) : null}
         {error === "config" ? (
-          <InlineAlert title="Configuração incompleta" tone="danger">
-            Não foi possível concluir o login porque o Supabase não está
+          <InlineAlert title="Configuracao incompleta" tone="danger">
+            Nao foi possivel concluir o login porque o Supabase nao esta
             configurado corretamente.
           </InlineAlert>
         ) : null}

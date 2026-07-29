@@ -1,7 +1,7 @@
 import "server-only";
 
 import { toPostgresTimestamp } from "@/lib/dates";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 
 type SemesterRow = Database["public"]["Tables"]["semesters"]["Row"];
@@ -26,7 +26,7 @@ export type AdminDashboardData = {
 };
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const now = toPostgresTimestamp(new Date());
 
   const { data: activeSemester, error: semesterError } = await supabase

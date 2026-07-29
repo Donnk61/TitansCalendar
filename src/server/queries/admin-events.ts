@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 
 export type AdminEventListFilters = {
@@ -28,7 +28,7 @@ export type AdminEventOptions = {
 };
 
 export async function getAdminEventOptions(): Promise<AdminEventOptions> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const [semesterResult, projectsResult, eventTypesResult] = await Promise.all([
     supabase
       .from("semesters")
@@ -66,7 +66,7 @@ export async function getAdminEventOptions(): Promise<AdminEventOptions> {
 export async function listAdminEvents(
   filters: AdminEventListFilters,
 ): Promise<AdminEventListItem[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const options = await getAdminEventOptions();
 
   if (!options.semester) {
@@ -124,7 +124,7 @@ export async function listAdminEvents(
 }
 
 export async function getAdminEventById(id: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const { data, error } = await supabase
     .from("events")
     .select(

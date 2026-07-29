@@ -1,10 +1,10 @@
 import "server-only";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import type { EditorAccess } from "@/server/auth/admin-session";
 
 export async function listEditorAccess(): Promise<EditorAccess[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const { data, error } = await supabase
     .from("editor_access")
     .select("id,email,display_name,role,is_active,created_at,updated_at")

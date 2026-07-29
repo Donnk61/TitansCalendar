@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 
 export type SemesterSummary = {
@@ -21,7 +21,7 @@ export type AdminMaintenanceData = {
 };
 
 export async function getAdminMaintenanceData(): Promise<AdminMaintenanceData> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const [semestersResult, projectsResult, eventTypesResult] = await Promise.all(
     [
       supabase
@@ -68,7 +68,7 @@ export async function getAdminMaintenanceData(): Promise<AdminMaintenanceData> {
 export async function getSemesterSummary(
   semesterId: string,
 ): Promise<SemesterSummary> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const [events, series, announcements] = await Promise.all([
     supabase
       .from("events")
@@ -105,7 +105,7 @@ export type AdminAnnouncementRow =
 export async function listAdminAnnouncements(): Promise<
   AdminAnnouncementRow[]
 > {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const { data, error } = await supabase
     .from("announcements")
     .select(
@@ -129,7 +129,7 @@ export async function listAdminAnnouncements(): Promise<
 export async function listActiveSemesterEventChoices(): Promise<
   Array<{ id: string; title: string }>
 > {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseServiceRoleClient();
   const { data: semester, error: semesterError } = await supabase
     .from("semesters")
     .select("id")
