@@ -171,19 +171,15 @@ export function PublicCalendarExperience({
       return;
     }
 
-    const calendarElement =
-      calendarColumnRef.current?.querySelector<HTMLElement>(".titans-calendar");
-    const railElement = weekRailRef.current;
-
-    if (!calendarElement || !railElement) {
-      return;
-    }
-
-    const calendarTarget = calendarElement;
-    const railTarget = railElement;
     let frameRequest = 0;
+    let observer: ResizeObserver | null = null;
+    let resizeListener: (() => void) | null = null;
+    let attempts = 0;
 
-    function updateFrameHeight() {
+    function updateFrameHeight(
+      calendarTarget: HTMLElement,
+      railTarget: HTMLElement,
+    ) {
       const calendarRect = calendarTarget.getBoundingClientRect();
       const railRect = railTarget.getBoundingClientRect();
       const nextHeight = Math.max(320, calendarRect.bottom - railRect.top);
@@ -195,17 +191,41 @@ export function PublicCalendarExperience({
       );
     }
 
-    frameRequest = requestAnimationFrame(updateFrameHeight);
+    function attachFrame() {
+      const calendarTarget =
+        calendarColumnRef.current?.querySelector<HTMLElement>(
+          ".titans-calendar",
+        );
+      const railTarget = weekRailRef.current;
 
-    const observer = new ResizeObserver(updateFrameHeight);
-    observer.observe(calendarTarget);
-    observer.observe(railTarget);
-    window.addEventListener("resize", updateFrameHeight);
+      if (!calendarTarget || !railTarget) {
+        attempts += 1;
+
+        if (attempts < 120) {
+          frameRequest = requestAnimationFrame(attachFrame);
+        }
+
+        return;
+      }
+
+      const measure = () => updateFrameHeight(calendarTarget, railTarget);
+
+      frameRequest = requestAnimationFrame(measure);
+      observer = new ResizeObserver(measure);
+      observer.observe(calendarTarget);
+      observer.observe(railTarget);
+      resizeListener = measure;
+      window.addEventListener("resize", resizeListener);
+    }
+
+    frameRequest = requestAnimationFrame(attachFrame);
 
     return () => {
       cancelAnimationFrame(frameRequest);
-      observer.disconnect();
-      window.removeEventListener("resize", updateFrameHeight);
+      observer?.disconnect();
+      if (resizeListener) {
+        window.removeEventListener("resize", resizeListener);
+      }
     };
   }, [filteredEvents.length, isDesktop, weekPanelOpen]);
 
