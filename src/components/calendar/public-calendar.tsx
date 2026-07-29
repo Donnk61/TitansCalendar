@@ -67,8 +67,8 @@ export function PublicCalendar({
   }
 
   return (
-    <section className="grid gap-4" aria-label="Calendário público">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section className="grid gap-2" aria-label="Calendário público">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <SegmentedControl
           ariaLabel="Visualização do calendário"
           items={viewItems}
@@ -88,7 +88,7 @@ export function PublicCalendar({
           />
         </div>
       </div>
-      <div className="titans-calendar min-h-[680px] overflow-hidden rounded-md border border-border bg-surface">
+      <div className="titans-calendar overflow-hidden rounded-md border border-border bg-surface">
         <FullCalendar
           allDayText="Dia inteiro"
           buttonText={{

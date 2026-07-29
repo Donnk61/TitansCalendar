@@ -185,9 +185,11 @@ export function PublicCalendarExperience({
         },
       }}
     >
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="grid min-w-0 gap-6">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid min-w-0 content-start gap-3">
           <ImportantAnnouncements />
+          <EventFilters />
+          <AppliedFilterChips />
           {filteredEvents.length > 0 && !isDesktop ? (
             <MobileCalendarAgenda />
           ) : null}
@@ -198,8 +200,6 @@ export function PublicCalendarExperience({
               semester={semester}
             />
           ) : null}
-          <EventFilters />
-          <AppliedFilterChips />
           {filteredEvents.length === 0 ? (
             <EmptyState
               description="Ajuste ou limpe os filtros para voltar ao cronograma completo do semestre."
@@ -235,22 +235,22 @@ function EventFilters() {
   const activeFilters = hasActivePublicFilters(filters);
 
   return (
-    <section className="grid gap-3" aria-label="Filtros de eventos">
+    <section className="grid gap-2" aria-label="Filtros de eventos">
       <button
         aria-controls="public-calendar-filters"
         aria-expanded={drawerOpen}
-        className="inline-flex min-h-10 w-fit items-center gap-2 rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+        className="inline-flex min-h-8 w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-2.5 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
         onClick={() => setDrawerOpen((open) => !open)}
         type="button"
       >
         <Filter aria-hidden="true" className="size-4" />
         Filtros
         {activeFilters ? (
-          <span className="rounded-xs bg-brand-orange px-1.5 py-0.5 text-xs font-black text-background">
+          <span className="rounded-xs bg-brand-orange px-1.5 py-0.5 text-[0.68rem] font-black text-background">
             ativos
           </span>
         ) : null}
-        <span className="text-xs text-text-muted">
+        <span className="text-[0.72rem] text-text-muted">
           {filteredEvents.length} eventos
         </span>
         {drawerOpen ? (

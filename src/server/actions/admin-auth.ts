@@ -1,8 +1,12 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  createSupabaseServerClient,
+  createSupabaseServiceRoleClient,
+} from "@/lib/supabase/server";
 import { getSupabaseServerEnv } from "@/lib/supabase/env";
 import { getSafeAdminNextPath } from "@/server/auth/admin-session";
 
@@ -33,12 +37,39 @@ export async function sendAdminMagicLink(
   }
 
   try {
-    const env = getSupabaseServerEnv();
+    getSupabaseServerEnv();
+    const normalizedEmail = parsed.data.email.toLowerCase();
+    const serviceRoleSupabase = createSupabaseServiceRoleClient();
+    const { data: authorizedAccess, error: accessError } =
+      await serviceRoleSupabase
+        .from("editor_access")
+        .select("id")
+        .eq("email", normalizedEmail)
+        .eq("is_active", true)
+        .in("role", ["admin", "editor"])
+        .maybeSingle();
+
+    if (accessError) {
+      return {
+        status: "error",
+        message:
+          "NÃ£o foi possÃ­vel verificar a permissÃ£o administrativa agora.",
+      };
+    }
+
+    if (!authorizedAccess) {
+      return {
+        status: "sent",
+        message:
+          "Se esse e-mail estiver autorizado, um link de acesso serÃ¡ enviado em instantes.",
+      };
+    }
+
     const supabase = await createSupabaseServerClient();
     const next = getSafeAdminNextPath(parsed.data.next ?? null);
-    const emailRedirectTo = `${env.siteUrl}/admin/auth/callback?next=${encodeURIComponent(next)}`;
+    const emailRedirectTo = `${await getRequestOrigin()}/admin/auth/callback?next=${encodeURIComponent(next)}`;
     const { error } = await supabase.auth.signInWithOtp({
-      email: parsed.data.email,
+      email: normalizedEmail,
       options: {
         emailRedirectTo,
         shouldCreateUser: true,
@@ -65,6 +96,19 @@ export async function sendAdminMagicLink(
         "O login administrativo ainda precisa das variáveis públicas do Supabase.",
     };
   }
+}
+
+async function getRequestOrigin() {
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "https";
+
+  if (!host) {
+    return "http://localhost:3000";
+  }
+
+  return `${protocol}://${host}`;
 }
 
 export async function signOutAdmin() {
