@@ -36,7 +36,7 @@ export function SegmentedControl({
             className={cn(
               "inline-flex min-h-9 items-center gap-2 px-3 text-sm font-semibold transition duration-normal",
               selected
-                ? "rounded-xs bg-brand-orange text-background"
+                ? "rounded-xs bg-surface-elevated text-brand-orange shadow-[inset_0_-2px_0_var(--brand-orange)]"
                 : "text-text-secondary hover:text-text-primary",
             )}
             key={item.value}

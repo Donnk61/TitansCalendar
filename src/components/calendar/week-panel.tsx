@@ -35,7 +35,7 @@ export function WeekPanel({
         : { start: now, end: now };
   return (
     <aside
-      className="grid h-[calc(100svh-6rem)] max-h-[calc(100svh-6rem)] grid-rows-[auto_minmax(0,1fr)] gap-3"
+      className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-3"
       aria-labelledby="week-panel-title"
     >
       <div className="sticky top-0 z-10 flex items-start justify-between gap-3 bg-background pb-1">

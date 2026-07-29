@@ -190,8 +190,8 @@ export function PublicCalendarExperience({
       <div
         className={
           weekPanelOpen
-            ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_330px]"
-            : "grid gap-5 xl:grid-cols-[minmax(0,1fr)_2.25rem]"
+            ? "grid items-stretch gap-5 xl:grid-cols-[minmax(0,1fr)_330px]"
+            : "grid items-stretch gap-5 xl:grid-cols-[minmax(0,1fr)_2.25rem]"
         }
       >
         <div className="grid min-w-0 content-start gap-3">
@@ -220,7 +220,7 @@ export function PublicCalendarExperience({
         </div>
         {isDesktop ? (
           <aside
-            className="xl:sticky xl:top-24 xl:self-start"
+            className="h-full xl:sticky xl:top-24 xl:self-stretch"
             aria-label="Resumo da semana"
           >
             {weekPanelOpen ? (
