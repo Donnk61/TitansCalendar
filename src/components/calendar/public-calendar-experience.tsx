@@ -126,6 +126,7 @@ export function PublicCalendarExperience({
 }) {
   const [filters, setFilters] = useState(emptyPublicEventFilters);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [weekPanelOpen, setWeekPanelOpen] = useState(true);
   const [dismissedAnnouncementIds, setDismissedAnnouncementIds] = useState<
     Set<string>
   >(() => readDismissedAnnouncements());
@@ -186,7 +187,13 @@ export function PublicCalendarExperience({
         },
       }}
     >
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div
+        className={
+          weekPanelOpen
+            ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]"
+            : "grid gap-5 xl:grid-cols-[minmax(0,1fr)_3rem]"
+        }
+      >
         <div className="grid min-w-0 content-start gap-3">
           <ImportantAnnouncements />
           {!isDesktop ? <EventFilters /> : null}
@@ -213,9 +220,36 @@ export function PublicCalendarExperience({
           <EventDetailsOverlay />
         </div>
         {isDesktop ? (
-          <div className="xl:sticky xl:top-24 xl:self-start">
-            <PublicWeekPanelExperience />
-          </div>
+          <aside
+            className="xl:sticky xl:top-24 xl:self-start"
+            aria-label="Resumo da semana"
+          >
+            {weekPanelOpen ? (
+              <div className="grid gap-3">
+                <button
+                  className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+                  onClick={() => setWeekPanelOpen(false)}
+                  type="button"
+                >
+                  Recolher
+                  <ChevronRight aria-hidden="true" className="size-4" />
+                </button>
+                <PublicWeekPanelExperience />
+              </div>
+            ) : (
+              <button
+                aria-label="Abrir resumo da semana"
+                className="flex min-h-[18rem] w-12 flex-col items-center justify-start gap-3 rounded-md border border-border bg-surface px-2 py-3 text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+                onClick={() => setWeekPanelOpen(true)}
+                type="button"
+              >
+                <ChevronLeft aria-hidden="true" className="size-4" />
+                <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.16em] [writing-mode:vertical-rl]">
+                  Esta semana
+                </span>
+              </button>
+            )}
+          </aside>
         ) : null}
       </div>
     </ExperienceContext>
