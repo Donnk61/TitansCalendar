@@ -13,8 +13,10 @@ import {
 import dynamic from "next/dynamic";
 import {
   CalendarDays,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   ExternalLink,
   Filter,
   MapPin,
@@ -183,25 +185,26 @@ export function PublicCalendarExperience({
         },
       }}
     >
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="grid min-w-0 gap-6">
           <ImportantAnnouncements />
-          <EventFilters />
-          <AppliedFilterChips />
           {filteredEvents.length > 0 && !isDesktop ? (
             <MobileCalendarAgenda />
           ) : null}
+          {isDesktop ? (
+            <DesktopPublicCalendar
+              events={filteredEvents.map(toFullCalendarEvent)}
+              onEventSelect={actions.selectEvent}
+              semester={semester}
+            />
+          ) : null}
+          <EventFilters />
+          <AppliedFilterChips />
           {filteredEvents.length === 0 ? (
             <EmptyState
               description="Ajuste ou limpe os filtros para voltar ao cronograma completo do semestre."
               icon={<Filter aria-hidden="true" className="size-5" />}
               title="Nenhum evento encontrado"
-            />
-          ) : isDesktop ? (
-            <DesktopPublicCalendar
-              events={filteredEvents.map(toFullCalendarEvent)}
-              onEventSelect={actions.selectEvent}
-              semester={semester}
             />
           ) : null}
           <EventDetailsOverlay />
@@ -225,20 +228,41 @@ export function PublicWeekPanelExperience() {
 
 function EventFilters() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const {
+    meta: { filteredEvents },
+    state: { filters },
+  } = useExperience();
+  const activeFilters = hasActivePublicFilters(filters);
 
   return (
-    <section aria-label="Filtros de eventos">
-      <div className="hidden md:block">
-        <FilterControls layout="desktop" />
+    <section className="grid gap-3" aria-label="Filtros de eventos">
+      <button
+        aria-controls="public-calendar-filters"
+        aria-expanded={drawerOpen}
+        className="inline-flex min-h-10 w-fit items-center gap-2 rounded-sm border border-border bg-surface px-3 text-sm font-semibold text-text-secondary transition duration-normal hover:border-brand-orange hover:text-text-primary focus-visible:outline-focus"
+        onClick={() => setDrawerOpen((open) => !open)}
+        type="button"
+      >
+        <Filter aria-hidden="true" className="size-4" />
+        Filtros
+        {activeFilters ? (
+          <span className="rounded-xs bg-brand-orange px-1.5 py-0.5 text-xs font-black text-background">
+            ativos
+          </span>
+        ) : null}
+        <span className="text-xs text-text-muted">
+          {filteredEvents.length} eventos
+        </span>
+        {drawerOpen ? (
+          <ChevronUp aria-hidden="true" className="size-4" />
+        ) : (
+          <ChevronDown aria-hidden="true" className="size-4" />
+        )}
+      </button>
+      <div className="hidden md:block" id="public-calendar-filters">
+        {drawerOpen ? <FilterControls layout="desktop" /> : null}
       </div>
       <div className="md:hidden">
-        <Button
-          leadingIcon={<Filter aria-hidden="true" className="size-4" />}
-          onClick={() => setDrawerOpen(true)}
-          variant="secondary"
-        >
-          Filtros
-        </Button>
         {drawerOpen ? (
           <FilterDrawer onClose={() => setDrawerOpen(false)}>
             <FilterControls layout="mobile" />

@@ -9,6 +9,7 @@ import {
   groupEventsByCurrentWeek,
 } from "@/features/events/calendar-display";
 import type { PublicCalendarEvent } from "@/features/events/public-types";
+import { APP_TIME_ZONE } from "@/lib/dates";
 
 export function WeekPanel({
   events,
@@ -108,7 +109,7 @@ function WeekEventCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold text-text-muted">
-            {formatEventTime(event)}
+            {formatEventDateAndTime(event)}
           </p>
           <button
             className="mt-1 block max-w-full truncate text-left font-display text-base font-bold text-text-primary transition duration-normal hover:text-brand-orange focus-visible:outline-focus"
@@ -137,4 +138,18 @@ function WeekEventCard({
       ) : null}
     </article>
   );
+}
+
+function formatEventDateAndTime(event: PublicCalendarEvent) {
+  const start = new Date(event.start);
+  const date = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone: APP_TIME_ZONE,
+    weekday: "short",
+  })
+    .format(start)
+    .replace(".", "");
+
+  return `${date}, ${formatEventTime(event)}`;
 }

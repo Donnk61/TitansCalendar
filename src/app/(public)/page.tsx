@@ -32,10 +32,10 @@ export default async function PublicHomePage() {
   }
 
   return (
-    <section className="px-[var(--space-shell-x)] py-8 sm:py-10">
-      <div className="mx-auto grid max-w-7xl gap-8">
+    <section className="px-[var(--space-shell-x)] py-4 sm:py-6">
+      <div className="mx-auto grid max-w-7xl gap-5">
         <div className="min-w-0">
-          <div className="mb-6 flex flex-wrap items-center gap-3">
+          <div className="mb-3 flex flex-wrap items-center gap-3">
             <Badge tone="orange">Semestre ativo: {data.semester.name}</Badge>
             <Badge>{data.events.length} eventos publicados</Badge>
             {data.source === "demo" ? (
@@ -44,13 +44,13 @@ export default async function PublicHomePage() {
               </Badge>
             ) : null}
           </div>
-          <h1 className="font-display text-4xl font-black leading-tight tracking-normal text-text-primary sm:text-6xl">
+          <h1 className="font-display text-2xl font-black leading-tight tracking-normal text-text-primary sm:text-4xl">
             Calendário do semestre
           </h1>
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-text-secondary">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary sm:text-base">
             Veja o mês, a semana e os marcos do semestre ativo da equipe TITANS.
           </p>
-          <div className="mt-8">
+          <div className="mt-5">
             {data.status === "empty-semester" ? (
               <EmptyState
                 description="Os eventos aparecerão aqui assim que forem publicados por um editor autorizado."
