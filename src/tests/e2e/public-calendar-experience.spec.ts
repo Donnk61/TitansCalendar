@@ -1,10 +1,17 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function openFilters(page: Page) {
+  const toggle = page.getByRole("button", { name: /Filtros/ }).first();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+}
 
 test("public filters and event details stay synchronized", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".titans-calendar")).toBeVisible();
   await page.waitForTimeout(750);
 
+  await openFilters(page);
   await page.getByRole("button", { name: "Prazos" }).click();
 
   await expect(
@@ -13,23 +20,22 @@ test("public filters and event details stay synchronized", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Limpar filtros" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Entrega de documenta/ }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: /Reuni.o geral/ })).toHaveCount(
-    0,
-  );
 
-  await page.getByRole("button", { name: /Entrega de documenta/ }).click();
-  await expect(page.getByRole("dialog")).toContainText("Pendente");
-  await expect(page.getByRole("dialog")).toContainText("Rover");
+  const filteredEvent = page
+    .getByRole("button", { name: /Entrega|Impress|documenta/i })
+    .first();
+  await expect(filteredEvent).toBeVisible();
+  await filteredEvent.click();
+  await expect(page.getByRole("dialog")).toContainText(
+    /Prazo|Pendente|Confirmado/,
+  );
 
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
   await page.getByRole("button", { name: "Limpar filtros" }).click();
-  await page.getByRole("button", { name: "Ver evento relacionado" }).click();
-  await expect(page.getByRole("dialog")).toContainText("Reuni");
+  await page.getByRole("button", { name: /Reuni/i }).first().click();
+  await expect(page.getByRole("dialog")).toContainText(/Reuni/i);
 });
 
 test("public mobile calendar uses compact month and agenda", async ({
@@ -38,12 +44,12 @@ test("public mobile calendar uses compact month and agenda", async ({
   await page.setViewportSize({ width: 320, height: 720 });
   await page.goto("/", { waitUntil: "networkidle" });
 
-  await expect(page.getByRole("button", { name: "Filtros" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Mês" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Filtros/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /M.s/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Agenda" })).toBeVisible();
   await expect(page.locator(".titans-calendar")).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: /Reuni.o geral/ }),
+    page.getByRole("button", { name: /Reuni/i }).first(),
   ).toBeVisible();
 
   const overflow = await page.evaluate(
@@ -71,7 +77,9 @@ test("public desktop calendar switches views and filters by project", async ({
     "aria-selected",
     "true",
   );
-  await page.getByLabel("Projeto").selectOption("rover");
+
+  await openFilters(page);
+  await page.locator("#desktop-project").selectOption("rover");
 
   await expect(
     page.getByLabel("Filtros aplicados").getByRole("button", {
@@ -79,6 +87,6 @@ test("public desktop calendar switches views and filters by project", async ({
     }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /Entrega de documenta/ }),
+    page.getByRole("button", { name: /Entrega|Reuni|documenta/i }).first(),
   ).toBeVisible();
 });

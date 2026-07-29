@@ -65,6 +65,21 @@ export async function sendAdminMagicLink(
       };
     }
 
+    const authUserError = await ensureAuthorizedAuthUser(
+      serviceRoleSupabase,
+      normalizedEmail,
+    );
+
+    if (authUserError) {
+      console.error("Failed to prepare authorized auth user", authUserError);
+
+      return {
+        status: "error",
+        message:
+          "NÃ£o foi possÃ­vel preparar o acesso autorizado agora. Verifique a chave service role do Supabase.",
+      };
+    }
+
     const supabase = await createSupabaseServerClient();
     const next = getSafeAdminNextPath(parsed.data.next ?? null);
     const emailRedirectTo = `${await getRequestOrigin()}/admin/auth/callback?next=${encodeURIComponent(next)}`;
@@ -77,6 +92,13 @@ export async function sendAdminMagicLink(
     });
 
     if (error) {
+      console.error("Failed to send admin magic link", {
+        code: error.code,
+        message: error.message,
+        name: error.name,
+        status: error.status,
+      });
+
       return {
         status: "error",
         message:
@@ -96,6 +118,69 @@ export async function sendAdminMagicLink(
         "O login administrativo ainda precisa das variáveis públicas do Supabase.",
     };
   }
+}
+
+async function ensureAuthorizedAuthUser(
+  supabase: ReturnType<typeof createSupabaseServiceRoleClient>,
+  email: string,
+) {
+  const existingUserResult = await findAuthUserByEmail(supabase, email);
+
+  if (existingUserResult.error) {
+    return existingUserResult.error;
+  }
+
+  const existingUser = existingUserResult.user;
+
+  if (!existingUser) {
+    const { error } = await supabase.auth.admin.createUser({
+      email,
+      email_confirm: true,
+    });
+
+    return error;
+  }
+
+  if (existingUser.email_confirmed_at) {
+    return null;
+  }
+
+  const { error } = await supabase.auth.admin.updateUserById(existingUser.id, {
+    email_confirm: true,
+  });
+
+  return error;
+}
+
+async function findAuthUserByEmail(
+  supabase: ReturnType<typeof createSupabaseServiceRoleClient>,
+  email: string,
+) {
+  for (let page = 1; page <= 10; page += 1) {
+    const { data, error } = await supabase.auth.admin.listUsers({
+      page,
+      perPage: 1000,
+    });
+
+    if (error) {
+      return { error, user: null };
+    }
+
+    const user = data.users.find((item) => item.email?.toLowerCase() === email);
+
+    if (user) {
+      return { error: null, user };
+    }
+
+    if (!data.nextPage) {
+      return { error: null, user: null };
+    }
+  }
+
+  return {
+    error: new Error("Authorized auth user lookup exceeded pagination limit."),
+    user: null,
+  };
 }
 
 async function getRequestOrigin() {

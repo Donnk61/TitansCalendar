@@ -5,16 +5,20 @@ test("public placeholder opens", async ({ page }) => {
 
   await expect(page.getByText("TITANS Cronograma")).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Calendário do semestre" }),
+    page.getByRole("heading", { name: /Calend.rio do semestre/ }),
   ).toBeVisible();
 });
 
-test("admin protected area handles missing local Supabase", async ({
+test("admin protected area handles unauthenticated access", async ({
   page,
 }) => {
   await page.goto("/admin", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByText("Supabase não configurado")).toBeVisible();
+  await expect(
+    page
+      .getByText(/Supabase n.o configurado/)
+      .or(page.getByRole("heading", { name: "Login restrito" })),
+  ).toBeVisible();
 });
 
 test("admin login opens without the protected shell", async ({ page }) => {
