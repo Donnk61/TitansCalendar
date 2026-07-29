@@ -241,12 +241,23 @@ export async function upsertAnnouncement(formData: FormData) {
     title: formData.get("title"),
   });
   const { supabase, user } = await requireEditor();
-  const { data: semester } = await supabase
+  const { data: semester, error: semesterError } = await supabase
     .from("semesters")
     .select("id")
     .eq("is_active", true)
     .is("archived_at", null)
     .maybeSingle();
+
+  if (semesterError) {
+    console.error("Failed to fetch active semester for announcement", {
+      code: semesterError.code,
+      details: semesterError.details,
+      hint: semesterError.hint,
+      message: semesterError.message,
+    });
+
+    throw new Error("Nao foi possivel carregar o semestre ativo.");
+  }
 
   if (!semester) {
     throw new Error("Ative um semestre antes de salvar avisos.");
@@ -254,12 +265,12 @@ export async function upsertAnnouncement(formData: FormData) {
 
   const payload = {
     body: input.body,
-    ends_at: input.endsAt || null,
+    ends_at: input.endsAt ? toAnnouncementTimestamp(input.endsAt) : null,
     is_published: input.isPublished,
     related_event_id: input.relatedEventId || null,
     semester_id: semester.id,
     severity: input.severity,
-    starts_at: input.startsAt,
+    starts_at: toAnnouncementTimestamp(input.startsAt),
     title: input.title,
     updated_by_email: user.email ?? "",
   };
@@ -271,9 +282,27 @@ export async function upsertAnnouncement(formData: FormData) {
       });
 
   if (error) {
+    console.error("Failed to save admin announcement", {
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+      message: error.message,
+    });
+
     throw new Error("Não foi possível salvar o aviso.");
   }
 
   await revalidatePublicCalendar();
   revalidatePath("/admin/announcements");
+}
+
+function toAnnouncementTimestamp(value: string) {
+  const localTimestamp = value.length === 16 ? `${value}:00` : value;
+  const date = new Date(`${localTimestamp}-03:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("Data do aviso invalida.");
+  }
+
+  return date.toISOString();
 }

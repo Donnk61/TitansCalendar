@@ -126,6 +126,7 @@ function AnnouncementForm({
             id={`title-${announcement?.id ?? "new"}`}
             maxLength={120}
             name="title"
+            required
             placeholder="Aviso importante…"
           />
         </Field>
@@ -156,6 +157,7 @@ function AnnouncementForm({
           id={`body-${announcement?.id ?? "new"}`}
           maxLength={1000}
           name="body"
+          required
           placeholder="Mensagem exibida no calendário público…"
         />
       </Field>
@@ -166,6 +168,7 @@ function AnnouncementForm({
             defaultValue={announcement?.startsAt}
             id={`starts-${announcement?.id ?? "new"}`}
             name="startsAt"
+            required
             type="datetime-local"
           />
         </Field>

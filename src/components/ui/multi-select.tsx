@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -21,6 +24,22 @@ export function MultiSelect({
   options,
   selectedValues = [],
 }: MultiSelectProps) {
+  const [selected, setSelected] = useState(() => new Set(selectedValues));
+
+  function toggleValue(value: string, checked: boolean) {
+    setSelected((current) => {
+      const next = new Set(current);
+
+      if (checked) {
+        next.add(value);
+      } else {
+        next.delete(value);
+      }
+
+      return next;
+    });
+  }
+
   return (
     <fieldset className="grid gap-2">
       <legend className="text-sm font-semibold text-text-primary">
@@ -28,7 +47,7 @@ export function MultiSelect({
       </legend>
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((option) => {
-          const isSelected = selectedValues.includes(option.value);
+          const isSelected = selected.has(option.value);
 
           return (
             <label
@@ -42,9 +61,12 @@ export function MultiSelect({
               key={option.value}
             >
               <input
+                checked={isSelected}
                 className="sr-only"
-                defaultChecked={isSelected}
                 name={name}
+                onChange={(event) =>
+                  toggleValue(option.value, event.currentTarget.checked)
+                }
                 type="checkbox"
                 value={option.value}
               />
