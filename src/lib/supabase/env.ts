@@ -14,7 +14,7 @@ export function getSupabasePublicEnv() {
   return {
     anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     siteUrl: env.NEXT_PUBLIC_SITE_URL,
-    url: env.NEXT_PUBLIC_SUPABASE_URL,
+    url: normalizeSupabaseProjectUrl(env.NEXT_PUBLIC_SUPABASE_URL),
   };
 }
 
@@ -34,6 +34,15 @@ export function getSupabaseServerEnv() {
     anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
     siteUrl: env.NEXT_PUBLIC_SITE_URL,
-    url: env.NEXT_PUBLIC_SUPABASE_URL,
+    url: normalizeSupabaseProjectUrl(env.NEXT_PUBLIC_SUPABASE_URL),
   };
+}
+
+function normalizeSupabaseProjectUrl(url: string) {
+  const parsedUrl = new URL(url);
+  parsedUrl.pathname = parsedUrl.pathname.replace(/\/rest\/v1\/?$/, "");
+  parsedUrl.search = "";
+  parsedUrl.hash = "";
+
+  return parsedUrl.toString().replace(/\/$/, "");
 }
