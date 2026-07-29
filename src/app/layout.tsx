@@ -17,8 +17,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = new URL("https://titans-calendar.vercel.app");
+const socialImageUrl = new URL("/titans-og-v2.png", siteUrl);
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://titans-calendar.vercel.app"),
+  metadataBase: siteUrl,
   title: {
     default: "TITANS Cronograma",
     template: "%s | TITANS Cronograma",
@@ -29,13 +32,17 @@ export const metadata: Metadata = {
   category: "calendar",
   icons: {
     icon: [
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/titans-logo.png", sizes: "512x512", type: "image/png" },
+      { url: "/titans-favicon-v2.png", sizes: "32x32", type: "image/png" },
+      { url: "/titans-logo-v2.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      {
+        url: "/apple-touch-icon-v2.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
-    shortcut: ["/favicon-32.png"],
+    shortcut: ["/titans-favicon-v2.png"],
   },
   openGraph: {
     title: "TITANS Cronograma",
@@ -44,7 +51,7 @@ export const metadata: Metadata = {
     siteName: "TITANS Cronograma",
     images: [
       {
-        url: "/titans-og.png",
+        url: socialImageUrl,
         width: 1200,
         height: 630,
         alt: "Logo da equipe TITANS e titulo TITANS Cronograma",
@@ -57,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TITANS Cronograma",
     description: "Calendario publico do semestre da equipe TITANS.",
-    images: ["/titans-og.png"],
+    images: [socialImageUrl],
   },
 };
 
