@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarCheck, Save } from "lucide-react";
@@ -77,6 +78,7 @@ export function EventForm({
   >;
 }) {
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const router = useRouter();
   const [allDay, setAllDay] = useState(initialValues?.allDay ?? false);
   const [recurrence, setRecurrence] = useState("none");
   const [startsOn, setStartsOn] = useState(initialValues?.startsOn ?? "");
@@ -120,6 +122,12 @@ export function EventForm({
     startTime,
   ]);
 
+  useEffect(() => {
+    if (mode === "create" && state.status === "success" && state.eventId) {
+      router.push(`/admin/events/${state.eventId}`);
+    }
+  }, [mode, router, state.eventId, state.status]);
+
   return (
     <form
       action={formAction}
@@ -143,6 +151,7 @@ export function EventForm({
               id="title"
               maxLength={120}
               name="title"
+              required
               placeholder="Reunião geral…"
             />
           </Field>
@@ -152,6 +161,7 @@ export function EventForm({
               defaultValue={initialValues?.typeSlug ?? eventTypes[0]?.value}
               id="typeSlug"
               name="typeSlug"
+              required
             >
               {eventTypes.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -166,6 +176,7 @@ export function EventForm({
               defaultValue={initialValues?.status ?? "confirmed"}
               id="status"
               name="status"
+              required
             >
               <option value="confirmed">Confirmado</option>
               <option value="pending">Pendente</option>
@@ -194,6 +205,7 @@ export function EventForm({
               min={semester.starts_on}
               name="startsOn"
               onChange={(event) => setStartsOn(event.currentTarget.value)}
+              required
               type="date"
             />
           </Field>
@@ -205,6 +217,7 @@ export function EventForm({
               id="startTime"
               name="startTime"
               onChange={(event) => setStartTime(event.currentTarget.value)}
+              required={!allDay}
               type="time"
             />
           </Field>

@@ -28,6 +28,18 @@ describe("event form validation", () => {
     expect(result.projectIds).toHaveLength(2);
     expect(result.linkLabels).toContain("Pauta");
   });
+
+  it("accepts empty optional urls and link rows", () => {
+    const formData = baseEventFormData();
+    formData.set("meetingUrl", "");
+    formData.append("linkLabel", "");
+    formData.append("linkUrl", "");
+
+    const result = parseEventFormData(formData);
+
+    expect(result.meetingUrl).toBeNull();
+    expect(result.linkUrls).toContain("");
+  });
 });
 
 function baseEventFormData() {

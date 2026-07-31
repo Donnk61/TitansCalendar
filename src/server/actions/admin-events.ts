@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { addDays, parseISO } from "date-fns";
+import { z } from "zod";
 import {
   generateOccurrences,
   getRecurrenceRule,
@@ -90,6 +91,8 @@ export async function createAdminEvent(
         .single();
 
       if (seriesError) {
+        console.error("Failed to create event series", seriesError);
+
         return {
           status: "error",
           message: "Não foi possível criar a série recorrente.",
@@ -116,6 +119,8 @@ export async function createAdminEvent(
       .select("id");
 
     if (eventError || !events?.[0]) {
+      console.error("Failed to create admin event", eventError);
+
       return { status: "error", message: "Não foi possível salvar o evento." };
     }
 
@@ -137,10 +142,12 @@ export async function createAdminEvent(
           ? `${occurrences.length} ocorrências criadas.`
           : "Evento criado com sucesso.",
     };
-  } catch {
+  } catch (error) {
+    console.error("Unexpected admin event creation failure", error);
+
     return {
       status: "error",
-      message: "Revise os campos e tente salvar novamente.",
+      message: getEventActionErrorMessage(error),
     };
   }
 }
@@ -191,6 +198,8 @@ export async function updateAdminEvent(
       .maybeSingle();
 
     if (error) {
+      console.error("Failed to update admin event", error);
+
       return {
         status: "error",
         message: "Não foi possível atualizar o evento.",
@@ -216,12 +225,30 @@ export async function updateAdminEvent(
       eventId,
       message: "Evento atualizado com sucesso.",
     };
-  } catch {
+  } catch (error) {
+    console.error("Unexpected admin event update failure", error);
+
     return {
       status: "error",
-      message: "Revise os campos e tente salvar novamente.",
+      message: getEventActionErrorMessage(error),
     };
   }
+}
+
+function getEventActionErrorMessage(error: unknown) {
+  if (error instanceof z.ZodError) {
+    const firstIssue = error.issues[0];
+
+    return firstIssue?.message
+      ? `Revise o campo: ${firstIssue.message}`
+      : "Revise os campos obrigatÃ³rios e tente novamente.";
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return "Revise os campos e tente salvar novamente.";
 }
 
 export async function cancelAdminEvent(formData: FormData) {
